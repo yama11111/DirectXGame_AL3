@@ -29,12 +29,18 @@ void GameScene::Initialize() {
 	// モデル
 	model_ = Model::Create();
 
-	for (size_t i = 0; i < _countof(worldTransform_); i++) {
-		worldTransform_[i].scale_ = {1.0f, 1.0f, 1.0f};
-		worldTransform_[i].rotation_ = {rotDist(engine), rotDist(engine), rotDist(engine)};
-		worldTransform_[i].translation_ = {posDist(engine), posDist(engine), posDist(engine)};
-		worldTransform_[i].Initialize();
-	}
+	//for (size_t i = 0; i < _countof(worldTransform_); i++) {
+	//	worldTransform_[i].scale_ = {1.0f, 1.0f, 1.0f};
+	//	worldTransform_[i].rotation_ = {rotDist(engine), rotDist(engine), rotDist(engine)};
+	//	worldTransform_[i].translation_ = {posDist(engine), posDist(engine), posDist(engine)};
+	//	worldTransform_[i].Initialize();
+	//}
+
+	worldTransform_[0].Initialize();
+
+	worldTransform_[1].translation_ = {0, 4.5f, 0};
+	worldTransform_[1].parent_ = &worldTransform_[0];
+	worldTransform_[1].Initialize();
 
 	// 視野角設定
 	//viewProjection_.fovAngleY = XMConvertToRadians(10.0f);
@@ -86,22 +92,32 @@ void GameScene::Update() {
 
 	//viewProjection_.up = {cosf(viewAngle), sinf(viewAngle), 0.0f};
 
-	// 視野角変更
-	if (input_->PushKey(DIK_W)) {
-		viewProjection_.fovAngleY += 0.01f;
-		viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
-	} else if (input_->PushKey(DIK_S)) {
-		viewProjection_.fovAngleY -= 0.01f;
-		viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.01f);
-	}
-	// ニアクリップ変更
-	if (input_->PushKey(DIK_UP)) {
-		viewProjection_.nearZ += 0.1f;
-	} else if (input_->PushKey(DIK_DOWN)) {
-		viewProjection_.nearZ -= 0.1f;
-	}
+	//// 視野角変更
+	//if (input_->PushKey(DIK_W)) {
+	//	viewProjection_.fovAngleY += 0.01f;
+	//	viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
+	//} else if (input_->PushKey(DIK_S)) {
+	//	viewProjection_.fovAngleY -= 0.01f;
+	//	viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.01f);
+	//}
+	//// ニアクリップ変更
+	//if (input_->PushKey(DIK_UP)) {
+	//	viewProjection_.nearZ += 0.1f;
+	//} else if (input_->PushKey(DIK_DOWN)) {
+	//	viewProjection_.nearZ -= 0.1f;
+	//}
 
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.UpdateMatrix();
+
+	// キャラ移動
+	XMFLOAT3 move = {0, 0, 0}; // 移動先
+	const float kCharacterSpeed = 0.2f; // 速度
+
+	if (input_->PushKey(DIK_LEFT)) {
+		move = {-kCharacterSpeed, 0, 0};
+	} else if (input_->PushKey(DIK_RIGHT)) {
+		move = {kCharacterSpeed, 0, 0};
+	}
 
 	// デバッグ表示
 	debugText_->SetPos(50, 50);
