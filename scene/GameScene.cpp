@@ -36,19 +36,43 @@ void GameScene::Initialize() {
 	//	worldTransform_[i].Initialize();
 	//}
 
-	worldTransform_[0].Initialize();
-
-	worldTransform_[1].translation_ = {0, 4.5f, 0};
-	worldTransform_[1].parent_ = &worldTransform_[0];
-	worldTransform_[1].Initialize();
+	// 大元
+	worldTransform_[PartId::Root].Initialize();
+	// 脊髄
+	worldTransform_[PartId::Spine].translation_ = {0, 4.5f, 0};
+	worldTransform_[PartId::Spine].parent_ = &worldTransform_[PartId::Root];
+	worldTransform_[PartId::Spine].Initialize();
+	// 上半身
+	worldTransform_[PartId::Chest].translation_ = {0, -4.5f, 0};
+	worldTransform_[PartId::Chest].parent_ = &worldTransform_[PartId::Spine];
+	worldTransform_[PartId::Chest].Initialize();
+	worldTransform_[PartId::Head].translation_ = {0, -4.5f, 0};
+	worldTransform_[PartId::Head].parent_ = &worldTransform_[PartId::Chest];
+	worldTransform_[PartId::Head].Initialize();
+	worldTransform_[PartId::ArmL].translation_ = {4.5f, 0, 0};
+	worldTransform_[PartId::ArmL].parent_ = &worldTransform_[PartId::Chest];
+	worldTransform_[PartId::ArmL].Initialize();
+	worldTransform_[PartId::ArmR].translation_ = {-4.5f, 0, 0};
+	worldTransform_[PartId::ArmR].parent_ = &worldTransform_[PartId::Chest];
+	worldTransform_[PartId::ArmR].Initialize();
+	// 下半身
+	worldTransform_[PartId::Hip].translation_ = {0, 4.5f, 0};
+	worldTransform_[PartId::Hip].parent_ = &worldTransform_[PartId::Spine];
+	worldTransform_[PartId::Hip].Initialize();
+	worldTransform_[PartId::LegL].translation_ = {4.5f, 4.5f, 0};
+	worldTransform_[PartId::LegL].parent_ = &worldTransform_[PartId::Hip];
+	worldTransform_[PartId::LegL].Initialize();
+	worldTransform_[PartId::LegR].translation_ = {-4.5f, 4.5f, 0};
+	worldTransform_[PartId::LegR].parent_ = &worldTransform_[PartId::Hip];
+	worldTransform_[PartId::LegR].Initialize();
 
 	// 視野角設定
 	//viewProjection_.fovAngleY = XMConvertToRadians(10.0f);
 	// アスペクト比設定
 	//viewProjection_.aspectRatio = 1.0f;
 	// ニアクリップ、ファークリップ設定
-	viewProjection_.nearZ = 52.0f;
-	viewProjection_.farZ = 53.0f;
+	//viewProjection_.nearZ = 52.0f;
+	//viewProjection_.farZ = 53.0f;
 
 	viewProjection_.Initialize();
 }
@@ -119,6 +143,21 @@ void GameScene::Update() {
 		move = {kCharacterSpeed, 0, 0};
 	}
 
+	worldTransform_[PartId::Root].UpdateMatrix();
+	worldTransform_[PartId::Spine].UpdateMatrix();
+	worldTransform_[PartId::Chest].UpdateMatrix();
+	worldTransform_[PartId::Head].UpdateMatrix();
+	worldTransform_[PartId::ArmL].UpdateMatrix();
+	worldTransform_[PartId::ArmR].UpdateMatrix();
+	worldTransform_[PartId::Hip].UpdateMatrix();
+	worldTransform_[PartId::LegL].UpdateMatrix();
+	worldTransform_[PartId::LegR].UpdateMatrix();
+
+	// 注視点移動
+	worldTransform_[PartId::Root].translation_.x += move.x;
+	worldTransform_[PartId::Root].translation_.y += move.y;
+	worldTransform_[PartId::Root].translation_.z += move.z;
+
 	// デバッグ表示
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
@@ -139,6 +178,13 @@ void GameScene::Update() {
 	debugText_->SetPos(50, 130);
 	debugText_->Printf(
 	  "nearZ : % f", viewProjection_.nearZ);
+	
+	debugText_->SetPos(50, 150);
+	debugText_->Printf(
+	  "Root : (% f, % f, %f)", 
+		worldTransform_[PartId::Root].translation_.x,
+		worldTransform_[PartId::Root].translation_.y,
+		worldTransform_[PartId::Root].translation_.z);
 }
 
 void GameScene::Draw() {
@@ -167,9 +213,15 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	for (size_t i = 0; i < _countof(worldTransform_); i++) {
-		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
-	}
+	model_->Draw(worldTransform_[PartId::Root], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::Spine], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::Chest], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::Head], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::ArmL], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::ArmR], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::Hip], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::LegL], viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_[PartId::LegR], viewProjection_, textureHandle_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
