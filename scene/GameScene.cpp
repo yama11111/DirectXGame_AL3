@@ -21,12 +21,55 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() { 
-	worldTransform_.Initialize(); 
+
+	float rotaY = worldTransform_.rotation_.y;
+	if (input_->PushKey(DIK_RIGHT)) {
+		rotaY += XM_PI / 36;
+		if (rotaY >= 2 * XM_PI) {
+			rotaY = 0;
+		}
+	} else if (input_->PushKey(DIK_LEFT)) {
+		rotaY -= XM_PI / 36;
+		if (rotaY <= -2 * XM_PI) {
+			rotaY = 0;
+		}
+	}
+	worldTransform_.rotation_.y = rotaY;
+
+	const float POWER = 0.5f;
+	XMFLOAT3 target = {sin(rotaY), 0.0f, cos(rotaY)};
+	float norm = sqrt(target.x * target.x + target.y * target.y + target.z * target.z);
+
+	if (input_->PushKey(DIK_UP)) {
+		worldTransform_.translation_.x += target.x / norm * POWER;
+		worldTransform_.translation_.y += target.y / norm * POWER;
+		worldTransform_.translation_.z += target.z / norm * POWER;
+
+		//viewProjection_.eye.x += target.x / norm * POWER;
+		//viewProjection_.eye.y += target.y / norm * POWER;
+		//viewProjection_.eye.z += target.z / norm * POWER;
+
+	} else if (input_->PushKey(DIK_DOWN)) {
+		worldTransform_.translation_.x -= target.x / norm * POWER;
+		worldTransform_.translation_.y -= target.y / norm * POWER;
+		worldTransform_.translation_.z -= target.z / norm * POWER;
+
+		//viewProjection_.eye.x -= target.x / norm * POWER;
+		//viewProjection_.eye.y -= target.y / norm * POWER;
+		//viewProjection_.eye.z -= target.z / norm * POWER;
+	}
+
+	worldTransform_.UpdateMatrix(); 
+	viewProjection_.UpdateMatrix();
 
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
-		"worldTransform : (% f, % f, % f)", 
+		"worldTransform_.translation : (% f, % f, % f)", 
 		worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+		"viewProjection_.eye : (% f, % f, % f)", 
+		viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 }
 
 void GameScene::Draw() {
