@@ -78,13 +78,13 @@ void GameScene::Update() {
 	worldTransformF_.translation_.y = worldTransformP_.translation_.y + target.y * 4;
 	worldTransformF_.translation_.z = worldTransformP_.translation_.z + target.z * 4;
 
-	//viewProjection_.eye.x = worldTransformP_.translation_.x - target.x * 10;
-	//viewProjection_.eye.y = worldTransformP_.translation_.y - target.y * 10 + 5;
-	//viewProjection_.eye.z = worldTransformP_.translation_.z - target.z * 10;
+	viewProjection_.eye.x = worldTransformP_.translation_.x - target.x * 10;
+	viewProjection_.eye.y = worldTransformP_.translation_.y - target.y * 10 + 5;
+	viewProjection_.eye.z = worldTransformP_.translation_.z - target.z * 10;
 
-	//viewProjection_.target.x = worldTransformP_.translation_.x + target.x * 10;
-	//viewProjection_.target.y = worldTransformP_.translation_.y + target.y * 10;
-	//viewProjection_.target.z = worldTransformP_.translation_.z + target.z * 10;
+	viewProjection_.target.x = worldTransformP_.translation_.x + target.x * 10;
+	viewProjection_.target.y = worldTransformP_.translation_.y + target.y * 10;
+	viewProjection_.target.z = worldTransformP_.translation_.z + target.z * 10;
 
 	worldTransformF_.rotation_ = worldTransformP_.rotation_;
 
