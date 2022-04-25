@@ -6,7 +6,13 @@ using namespace DirectX;
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() { delete model_; }
+GameScene::~GameScene() { 
+	delete player_;
+	delete front_;
+	for (size_t i = 0; i < 4; i++) {
+		delete enemy_[i];
+	}
+}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -15,58 +21,89 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
-	model_ = Model::Create();
-	worldTransform_.Initialize();
+	textureHandle2_ = TextureManager::Load("front.png");
+
+	player_ = Model::Create();
+	worldTransformP_.Initialize();
+	front_ = Model::Create();
+	worldTransformF_.translation_ = {0, 0, 5};
+	worldTransformF_.scale_ = {0.25f, 0.25f, 1.0f};
+	worldTransformF_.Initialize();
+
+	for (size_t i = 0; i < 4; i++) {
+		enemy_[i] = Model::Create();
+	}
+	worldTransformE_[0].translation_ = {10, 0, 0};
+	worldTransformE_[1].translation_ = {-10, 0, 0};
+	worldTransformE_[2].translation_ = {0, 10, 0};
+	worldTransformE_[3].translation_ = {0, -10, 0};
+
+	for (size_t i = 0; i < 4; i++) {
+		worldTransformE_[i].Initialize();
+	}
 	viewProjection_.Initialize();
 }
 
 void GameScene::Update() { 
 
-	float rotaY = worldTransform_.rotation_.y;
 	if (input_->PushKey(DIK_RIGHT)) {
-		rotaY += XM_PI / 36;
-		if (rotaY >= 2 * XM_PI) {
-			rotaY = 0;
+		worldTransformP_.rotation_.y += XM_PI / 36;
+		if (worldTransformP_.rotation_.y >= 2 * XM_PI) {
+			worldTransformP_.rotation_.y = 0;
 		}
 	} else if (input_->PushKey(DIK_LEFT)) {
-		rotaY -= XM_PI / 36;
-		if (rotaY <= -2 * XM_PI) {
-			rotaY = 0;
+		worldTransformP_.rotation_.y -= XM_PI / 36;
+		if (worldTransformP_.rotation_.y <= -2 * XM_PI) {
+			worldTransformP_.rotation_.y = 0;
 		}
 	}
-	worldTransform_.rotation_.y = rotaY;
+	worldTransformF_.rotation_ = worldTransformP_.rotation_;
 
 	const float POWER = 0.5f;
-	XMFLOAT3 target = {sin(rotaY), 0.0f, cos(rotaY)};
-	float norm = sqrt(target.x * target.x + target.y * target.y + target.z * target.z);
+	// x,z逆
+	XMFLOAT3 target = {sin(worldTransformP_.rotation_.y), 0.0f, cos(worldTransformP_.rotation_.y)};
 
 	if (input_->PushKey(DIK_UP)) {
-		worldTransform_.translation_.x += target.x / norm * POWER;
-		worldTransform_.translation_.y += target.y / norm * POWER;
-		worldTransform_.translation_.z += target.z / norm * POWER;
-
-		//viewProjection_.eye.x += target.x / norm * POWER;
-		//viewProjection_.eye.y += target.y / norm * POWER;
-		//viewProjection_.eye.z += target.z / norm * POWER;
+		worldTransformP_.translation_.x += target.x * POWER;
+		worldTransformP_.translation_.y += target.y * POWER;
+		worldTransformP_.translation_.z += target.z * POWER;
 
 	} else if (input_->PushKey(DIK_DOWN)) {
-		worldTransform_.translation_.x -= target.x / norm * POWER;
-		worldTransform_.translation_.y -= target.y / norm * POWER;
-		worldTransform_.translation_.z -= target.z / norm * POWER;
-
-		//viewProjection_.eye.x -= target.x / norm * POWER;
-		//viewProjection_.eye.y -= target.y / norm * POWER;
-		//viewProjection_.eye.z -= target.z / norm * POWER;
+		worldTransformP_.translation_.x -= target.x * POWER;
+		worldTransformP_.translation_.y -= target.y * POWER;
+		worldTransformP_.translation_.z -= target.z * POWER;
 	}
 
-	worldTransform_.UpdateMatrix(); 
+	worldTransformF_.translation_.x = worldTransformP_.translation_.x + target.x * 4;
+	worldTransformF_.translation_.y = worldTransformP_.translation_.y + target.y * 4;
+	worldTransformF_.translation_.z = worldTransformP_.translation_.z + target.z * 4;
+
+	//viewProjection_.eye.x = worldTransformP_.translation_.x - target.x * 10;
+	//viewProjection_.eye.y = worldTransformP_.translation_.y - target.y * 10 + 5;
+	//viewProjection_.eye.z = worldTransformP_.translation_.z - target.z * 10;
+
+	//viewProjection_.target.x = worldTransformP_.translation_.x + target.x * 10;
+	//viewProjection_.target.y = worldTransformP_.translation_.y + target.y * 10;
+	//viewProjection_.target.z = worldTransformP_.translation_.z + target.z * 10;
+
+	worldTransformF_.rotation_ = worldTransformP_.rotation_;
+
+	worldTransformP_.UpdateMatrix(); 
+	worldTransformF_.UpdateMatrix(); 
+	for (size_t i = 0; i < 4; i++) {
+		worldTransformE_[i].UpdateMatrix(); 
+	}
 	viewProjection_.UpdateMatrix();
 
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
-		"worldTransform_.translation : (% f, % f, % f)", 
-		worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+		"player : worldTransform_.translation_ : (% f, % f, % f)", 
+		worldTransformP_.translation_.x, worldTransformP_.translation_.y, worldTransformP_.translation_.z);
 	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+		"player : worldTransform_.rotation_ : (% f, % f, % f)", 
+		worldTransformP_.rotation_.x, worldTransformP_.rotation_.y, worldTransformP_.rotation_.z);
+	debugText_->SetPos(50, 90);
 	debugText_->Printf(
 		"viewProjection_.eye : (% f, % f, % f)", 
 		viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
@@ -98,7 +135,12 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	player_->Draw(worldTransformP_, viewProjection_, textureHandle_);
+	front_->Draw(worldTransformF_, viewProjection_, textureHandle2_);
+	for (size_t i = 0; i < 4; i++) {
+		enemy_[i]->Draw(worldTransformE_[i], viewProjection_, textureHandle_);
+	}
+	
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

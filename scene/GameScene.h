@@ -52,7 +52,12 @@ class GameScene {
 	/// ゲームシーン用
 	/// </summary>
 	uint32_t textureHandle_ = 0;
-	Model* model_ = nullptr;
-	WorldTransform worldTransform_;
+	uint32_t textureHandle2_ = 0;
+	Model* player_ = nullptr;
+	WorldTransform worldTransformP_;
+	Model* front_ = nullptr;
+	WorldTransform worldTransformF_;
+	Model* enemy_[4] = {nullptr, nullptr, nullptr, nullptr};
+	WorldTransform worldTransformE_[4];
 	ViewProjection viewProjection_;
 };
