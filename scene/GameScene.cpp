@@ -39,14 +39,14 @@ void GameScene::Initialize() {
 	// 大元
 	worldTransform_[PartId::Root].Initialize();
 	// 脊髄
-	worldTransform_[PartId::Spine].translation_ = {0, 4.5f, 0};
+	worldTransform_[PartId::Spine].translation_ = {0, 0, 0};
 	worldTransform_[PartId::Spine].parent_ = &worldTransform_[PartId::Root];
 	worldTransform_[PartId::Spine].Initialize();
 	// 上半身
-	worldTransform_[PartId::Chest].translation_ = {0, -4.5f, 0};
+	worldTransform_[PartId::Chest].translation_ = {0, 0, 0};
 	worldTransform_[PartId::Chest].parent_ = &worldTransform_[PartId::Spine];
 	worldTransform_[PartId::Chest].Initialize();
-	worldTransform_[PartId::Head].translation_ = {0, -4.5f, 0};
+	worldTransform_[PartId::Head].translation_ = {0, 4.5f, 0};
 	worldTransform_[PartId::Head].parent_ = &worldTransform_[PartId::Chest];
 	worldTransform_[PartId::Head].Initialize();
 	worldTransform_[PartId::ArmL].translation_ = {4.5f, 0, 0};
@@ -56,13 +56,13 @@ void GameScene::Initialize() {
 	worldTransform_[PartId::ArmR].parent_ = &worldTransform_[PartId::Chest];
 	worldTransform_[PartId::ArmR].Initialize();
 	// 下半身
-	worldTransform_[PartId::Hip].translation_ = {0, 4.5f, 0};
+	worldTransform_[PartId::Hip].translation_ = {0, -4.5f, 0};
 	worldTransform_[PartId::Hip].parent_ = &worldTransform_[PartId::Spine];
 	worldTransform_[PartId::Hip].Initialize();
-	worldTransform_[PartId::LegL].translation_ = {4.5f, 4.5f, 0};
+	worldTransform_[PartId::LegL].translation_ = {4.5f, -4.5f, 0};
 	worldTransform_[PartId::LegL].parent_ = &worldTransform_[PartId::Hip];
 	worldTransform_[PartId::LegL].Initialize();
-	worldTransform_[PartId::LegR].translation_ = {-4.5f, 4.5f, 0};
+	worldTransform_[PartId::LegR].translation_ = {-4.5f, -4.5f, 0};
 	worldTransform_[PartId::LegR].parent_ = &worldTransform_[PartId::Hip];
 	worldTransform_[PartId::LegR].Initialize();
 
@@ -143,6 +143,24 @@ void GameScene::Update() {
 		move = {kCharacterSpeed, 0, 0};
 	}
 
+	// 上半身回転
+	const float kChestRotSpeed = 0.05f; // 速度
+
+	if (input_->PushKey(DIK_U)) {
+		worldTransform_[PartId::Chest].rotation_.y -= kChestRotSpeed;
+	} else if (input_->PushKey(DIK_I)) {
+		worldTransform_[PartId::Chest].rotation_.y += kChestRotSpeed;
+	}
+
+	// 下半身回転
+	const float kHipRotSpeed = 0.05f; // 速度
+
+	if (input_->PushKey(DIK_J)) {
+		worldTransform_[PartId::Hip].rotation_.y -= kHipRotSpeed;
+	} else if (input_->PushKey(DIK_K)) {
+		worldTransform_[PartId::Hip].rotation_.y += kHipRotSpeed;
+	}
+
 	worldTransform_[PartId::Root].UpdateMatrix();
 	worldTransform_[PartId::Spine].UpdateMatrix();
 	worldTransform_[PartId::Chest].UpdateMatrix();
@@ -213,8 +231,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	model_->Draw(worldTransform_[PartId::Root], viewProjection_, textureHandle_);
-	model_->Draw(worldTransform_[PartId::Spine], viewProjection_, textureHandle_);
+	//model_->Draw(worldTransform_[PartId::Root], viewProjection_, textureHandle_);
+	//model_->Draw(worldTransform_[PartId::Spine], viewProjection_, textureHandle_);
 	model_->Draw(worldTransform_[PartId::Chest], viewProjection_, textureHandle_);
 	model_->Draw(worldTransform_[PartId::Head], viewProjection_, textureHandle_);
 	model_->Draw(worldTransform_[PartId::ArmL], viewProjection_, textureHandle_);
