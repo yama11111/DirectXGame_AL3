@@ -49,12 +49,12 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_RIGHT)) {
 		worldTransformP_.rotation_.y += XM_PI / 36;
 		if (worldTransformP_.rotation_.y >= 2 * XM_PI) {
-			worldTransformP_.rotation_.y = 0;
+			worldTransformP_.rotation_.y -= 2 * XM_PI;
 		}
 	} else if (input_->PushKey(DIK_LEFT)) {
 		worldTransformP_.rotation_.y -= XM_PI / 36;
 		if (worldTransformP_.rotation_.y <= -2 * XM_PI) {
-			worldTransformP_.rotation_.y = 0;
+			worldTransformP_.rotation_.y += 2 * XM_PI;
 		}
 	}
 	worldTransformF_.rotation_ = worldTransformP_.rotation_;
