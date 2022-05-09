@@ -61,30 +61,30 @@ void GameScene::Update() {
 
 	const float POWER = 0.5f;
 	// x,z逆
-	XMFLOAT3 target = {sin(worldTransformP_.rotation_.y), 0.0f, cos(worldTransformP_.rotation_.y)};
+	XMFLOAT3 direction = {sin(worldTransformP_.rotation_.y), 0.0f, cos(worldTransformP_.rotation_.y)};
 
 	if (input_->PushKey(DIK_UP)) {
-		worldTransformP_.translation_.x += target.x * POWER;
-		worldTransformP_.translation_.y += target.y * POWER;
-		worldTransformP_.translation_.z += target.z * POWER;
+		worldTransformP_.translation_.x += direction.x * POWER;
+		worldTransformP_.translation_.y += direction.y * POWER;
+		worldTransformP_.translation_.z += direction.z * POWER;
 
 	} else if (input_->PushKey(DIK_DOWN)) {
-		worldTransformP_.translation_.x -= target.x * POWER;
-		worldTransformP_.translation_.y -= target.y * POWER;
-		worldTransformP_.translation_.z -= target.z * POWER;
+		worldTransformP_.translation_.x -= direction.x * POWER;
+		worldTransformP_.translation_.y -= direction.y * POWER;
+		worldTransformP_.translation_.z -= direction.z * POWER;
 	}
 
-	worldTransformF_.translation_.x = worldTransformP_.translation_.x + target.x * 4;
-	worldTransformF_.translation_.y = worldTransformP_.translation_.y + target.y * 4;
-	worldTransformF_.translation_.z = worldTransformP_.translation_.z + target.z * 4;
+	worldTransformF_.translation_.x = worldTransformP_.translation_.x + direction.x * 4;
+	worldTransformF_.translation_.y = worldTransformP_.translation_.y + direction.y * 4;
+	worldTransformF_.translation_.z = worldTransformP_.translation_.z + direction.z * 4;
 
-	viewProjection_.eye.x = worldTransformP_.translation_.x - target.x * 10;
-	viewProjection_.eye.y = worldTransformP_.translation_.y - target.y * 10 + 5;
-	viewProjection_.eye.z = worldTransformP_.translation_.z - target.z * 10;
+	viewProjection_.eye.x = worldTransformP_.translation_.x - direction.x * 10;
+	viewProjection_.eye.y = worldTransformP_.translation_.y - direction.y * 10 + 5;
+	viewProjection_.eye.z = worldTransformP_.translation_.z - direction.z * 10;
 
-	viewProjection_.target.x = worldTransformP_.translation_.x + target.x * 10;
-	viewProjection_.target.y = worldTransformP_.translation_.y + target.y * 10;
-	viewProjection_.target.z = worldTransformP_.translation_.z + target.z * 10;
+	viewProjection_.target.x = worldTransformP_.translation_.x + direction.x * 10;
+	viewProjection_.target.y = worldTransformP_.translation_.y + direction.y * 10;
+	viewProjection_.target.z = worldTransformP_.translation_.z + direction.z * 10;
 
 	worldTransformF_.rotation_ = worldTransformP_.rotation_;
 
