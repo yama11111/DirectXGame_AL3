@@ -31,7 +31,12 @@ void GameScene::Initialize() {
 
 }
 
-void GameScene::Update() { debugCamera_->Update(); }
+void GameScene::Update() { 
+	
+	debugCamera_->Update(); 
+	
+	//mat.m[0][0] = 1;
+}
 
 void GameScene::Draw() {
 
