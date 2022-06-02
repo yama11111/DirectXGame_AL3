@@ -59,5 +59,4 @@ class GameScene {
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
-	//Matrix4 mat;
 };

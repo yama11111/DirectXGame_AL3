@@ -3,6 +3,7 @@
 #include <cassert>
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+#include "MyCalc.h"
 
 GameScene::GameScene() {}
 
@@ -26,7 +27,28 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
+
+
+	worldTransform_.scale_ = {5.0, 1.0, 1.0};
+	
+	Matrix4 matScale;
+	matScale.m[0][0] = 5.0;
+	matScale.m[1][1] = 1.0;
+	matScale.m[2][2] = 1.0;
+	matScale.m[3][3] = 1.0;
+
+	worldTransform_.matWorld_ = {
+		1, 0, 0, 0, 
+		0, 1, 0, 0, 
+		0, 0, 1, 0, 
+		0, 0, 0, 1
+	};
+
+	worldTransform_.matWorld_ = MultMatrix4(worldTransform_.matWorld_, matScale);
+
+	//worldTransform_.TransferMatrix();
 	worldTransform_.Initialize();
+
 	viewProjection_.Initialize();
 
 }
@@ -35,7 +57,6 @@ void GameScene::Update() {
 	
 	debugCamera_->Update(); 
 	
-	//mat.m[0][0] = 1;
 }
 
 void GameScene::Draw() {
