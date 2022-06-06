@@ -9,7 +9,11 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete debugCamera_;
-	delete model_;
+	delete player_;
+	delete front_;
+	for (size_t i = 0; i < 4; i++) {
+		delete enemy_[i];
+	}
 }
 
 void GameScene::Initialize() {
@@ -26,31 +30,41 @@ void GameScene::Initialize() {
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
-	model_ = Model::Create();
+	textureHandle2_ = TextureManager::Load("front.png");
 
+	player_ = Model::Create();
+	front_ = Model::Create();
+	worldTransformF_.translation_ = {0, 0, 5};
+	worldTransformF_.scale_ = {0.25f, 0.25f, 1.0f};
+	for (size_t i = 0; i < 4; i++) {
+		enemy_[i] = Model::Create();
+	}
+	worldTransformE_[0].translation_ = {10, 0, 0};
+	worldTransformE_[1].translation_ = {-10, 0, 0};
+	worldTransformE_[2].translation_ = {0, 10, 0};
+	worldTransformE_[3].translation_ = {0, -10, 0};
 
-	worldTransform_.scale_ = {5.0, 1.0, 1.0};
-	
 	Matrix4 matScale;
 	matScale.m[0][0] = 5.0;
 	matScale.m[1][1] = 1.0;
 	matScale.m[2][2] = 1.0;
 	matScale.m[3][3] = 1.0;
 
-	worldTransform_.matWorld_ = {
+	worldTransformF_.matWorld_ = {
 		1, 0, 0, 0, 
 		0, 1, 0, 0, 
 		0, 0, 1, 0, 
 		0, 0, 0, 1
 	};
+	worldTransformF_.matWorld_ = MultMatrix4(worldTransformF_.matWorld_, matScale);
 
-	worldTransform_.matWorld_ = MultMatrix4(worldTransform_.matWorld_, matScale);
 
-	//worldTransform_.TransferMatrix();
-	worldTransform_.Initialize();
-
+	worldTransformP_.Initialize();
+	worldTransformF_.Initialize();
+	for (size_t i = 0; i < 4; i++) {
+		worldTransformE_[i].Initialize();
+	}
 	viewProjection_.Initialize();
-
 }
 
 void GameScene::Update() { 
@@ -85,8 +99,12 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	
+	player_->Draw(worldTransformP_, debugCamera_->GetViewProjection(), textureHandle_);
+	front_->Draw(worldTransformF_, debugCamera_->GetViewProjection(), textureHandle2_);
+	for (size_t i = 0; i < 4; i++) {
+		enemy_[i]->Draw(worldTransformE_[i], debugCamera_->GetViewProjection(), textureHandle_);
+	}
 
 	//PrimitiveDrawer::GetInstance()->DrawLine3d({0.0f, 0.0f, 0.0f}, {100.0f, 100.0f, 100.0f}, {2.0f, 0.0f, 0.0f, 0.0f});
 
