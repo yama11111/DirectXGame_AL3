@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3.h"
 #include "Matrix4.h"
+#define PI 3.141592
 
 Vector3 AddVector3(const Vector3& vec1, const Vector3& vec2);   // ‘«‚µŽZ
 Vector3 SubVector3(const Vector3& vec1, const Vector3& vec2);   // ˆø‚«ŽZ

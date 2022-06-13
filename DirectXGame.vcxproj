@@ -98,7 +98,7 @@
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyCalc.cpp" />
+    <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
@@ -129,7 +129,7 @@
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
-    <ClInclude Include="MyCalc.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Vec3.h" />
   </ItemGroup>
