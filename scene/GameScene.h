@@ -10,6 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include "Vec3.h"
 
 /// <summary>
 /// ゲームシーン
@@ -61,8 +62,16 @@ class GameScene {
 	WorldTransform worldTransformF_;
 	Model* enemy_[4] = {nullptr, nullptr, nullptr, nullptr};
 	WorldTransform worldTransformE_[4];
-	ViewProjection viewProjection_;
+	ViewProjection viewProjection_[2];
 
 	bool bioMove = false;
+	const float POWER = 0.5f;
+	Vec3 direction;
 
+  private:
+	void InitState();
+	void Affine(WorldTransform& wt);
+	void BioMove();
+	void CameraMove();
+	void DebugState();
 };

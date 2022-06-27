@@ -64,3 +64,63 @@ Matrix4 MultMatrix4(const Matrix4& mat1, const Matrix4& mat2) {
 
 	return m;
 }
+
+Matrix4 Scaling(const Matrix4& mat, const Vector3& scale) {
+	Matrix4 matScale;
+	matScale.m[0][0] = scale.x;
+	matScale.m[1][1] = scale.y;
+	matScale.m[2][2] = scale.z;
+	matScale.m[3][3] = 1.0;
+
+	return MultMatrix4(mat, matScale);
+}
+
+Matrix4 RotationX(const Matrix4& mat, const float rota) {
+	Matrix4 matRota = {
+		1, 0, 0, 0, 
+		0, (float)cos(rota), (float)sin(rota), 0, 
+		0, (float)-sin(rota), (float)cos(rota), 0,
+		0, 0, 0, 1
+	};
+
+	return MultMatrix4(mat, matRota);
+}
+Matrix4 RotationY(const Matrix4& mat, const float rota) {
+	Matrix4 matRota = {
+		(float)cos(rota), 0, (float)-sin(rota), 0, 
+		0, 1, 0, 0, 
+		(float)sin(rota), 0, (float)cos(rota),  0,
+		0, 0, 0, 1
+	};
+
+	return MultMatrix4(mat, matRota);
+}
+Matrix4 RotationZ(const Matrix4& mat, const float rota) { 
+	Matrix4 matRota = {
+		(float)cos(rota), (float)sin(rota), 0, 0, 
+		(float)-sin(rota), (float)cos(rota), 0, 0, 
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+
+	return MultMatrix4(mat, matRota);
+}
+
+Matrix4 Rotation(const Matrix4& mat, const Vector3& rota) {
+	Matrix4 m = mat;
+	m = RotationZ(m, rota.z);
+	m = RotationX(m, rota.x);
+	m = RotationY(m, rota.y);
+	return m;
+}
+
+Matrix4 Moving(const Matrix4& mat, const Vector3& move) { 
+	Matrix4 matMove = {
+		1, 0, 0, 0, 
+		0, 1, 0, 0, 
+		0, 0, 1, 0,
+		move.x, move.y, move.z, 1
+	};
+
+	return MultMatrix4(mat, matMove);
+}
