@@ -42,7 +42,7 @@ void GameScene::Initialize() {
 
 void GameScene::Update() { 
 	
-	debugCamera_->Update(); 
+	debugCamera_->Update();
 }
 
 void GameScene::Draw() {
@@ -99,7 +99,10 @@ void GameScene::Draw() {
 
 void GameScene::Affine(WorldTransform& wt) {
 	wt.matWorld_ = {
-	  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+	  1, 0, 0, 0, 
+	  0, 1, 0, 0, 
+	  0, 0, 1, 0, 
+	  0, 0, 0, 1,
 	};
 	wt.matWorld_ = Scaling(wt.matWorld_, wt.scale_);
 	wt.matWorld_ = Rotation(wt.matWorld_, wt.rotation_);
