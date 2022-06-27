@@ -31,24 +31,10 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 
 	worldTransform_.scale_ = {5.0, 1.0, 1.0};
-	
-	Matrix4 matScale;
-	matScale.m[0][0] = worldTransform_.scale_.x;
-	matScale.m[1][1] = worldTransform_.scale_.y;
-	matScale.m[2][2] = worldTransform_.scale_.z;
-	matScale.m[3][3] = 1.0;
 
-	worldTransform_.matWorld_ = {
-		1, 0, 0, 0, 
-		0, 1, 0, 0, 
-		0, 0, 1, 0, 
-		0, 0, 0, 1
-	};
+	Scaling(worldTransform_.matWorld_, worldTransform_.scale_);
 
-	worldTransform_.matWorld_ = MultMatrix4(worldTransform_.matWorld_, matScale);
-
-	//worldTransform_.rotation_ = {0.0f, 0.0f, };
-	Matrix4 matRotZ;
+	worldTransform_.rotation_ = {0.0f, PI / , 0.0f};
 
 
 	worldTransform_.TransferMatrix();

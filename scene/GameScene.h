@@ -59,4 +59,5 @@ class GameScene {
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
+	void Affine(WorldTransform& wt);
 };

@@ -16,3 +16,9 @@ Matrix4 TransposeMatrix4(const Matrix4& mat); // “]’u
 Vector3 MultVec3Mat4(const Vector3& vec, const Matrix4& mat);
 
 Matrix4 MultMatrix4(const Matrix4& mat1, const Matrix4& mat2);
+Matrix4 Scaling(const Matrix4& mat, const Vector3& scale);
+Matrix4 RotationX(const Matrix4& mat, const float rota);
+Matrix4 RotationY(const Matrix4& mat, const float rota);
+Matrix4 RotationZ(const Matrix4& mat, const float rota);
+Matrix4 Rotation(const Matrix4& mat, const Vector3& rota);
+Matrix4 Moving(const Matrix4& mat, const Vector3& move);
