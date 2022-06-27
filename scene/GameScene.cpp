@@ -114,3 +114,13 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+
+void GameScene::Affine(WorldTransform& wt) {
+	wt.matWorld_ = {
+	  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+	};
+	wt.matWorld_ = Scaling(wt.matWorld_, wt.scale_);
+	wt.matWorld_ = Rotation(wt.matWorld_, wt.rotation_);
+	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
+	wt.TransferMatrix();
+}
