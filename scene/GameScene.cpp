@@ -31,13 +31,10 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 
 	worldTransform_.scale_ = {5.0, 1.0, 1.0};
+	worldTransform_.rotation_ = {0.0f, PI / 4, 0.0f};
+	worldTransform_.translation_ = {0, 10, 0};
 
-	Scaling(worldTransform_.matWorld_, worldTransform_.scale_);
-
-	worldTransform_.rotation_ = {0.0f, PI / , 0.0f};
-
-
-	worldTransform_.TransferMatrix();
+	Affine(worldTransform_);
 
 	viewProjection_.Initialize();
 
@@ -46,7 +43,6 @@ void GameScene::Initialize() {
 void GameScene::Update() { 
 	
 	debugCamera_->Update(); 
-	
 }
 
 void GameScene::Draw() {
