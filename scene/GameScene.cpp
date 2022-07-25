@@ -192,16 +192,47 @@ void GameScene::MoveChara() {
 		angle2 -= kSpeed2;
 	}
 
-	worldTransforms_[kRoot].rotation_.y += angle2;
+	worldTransforms_[kRoot].rotation_.y -= angle2;
 }
 
 void GameScene::Walk() {
-	float angle = PI / 180 * 5.0f;
+	PartWalk(kArmL, true);
+	PartWalk(kArmR, false);
+	PartWalk(kLegL, false);
+	PartWalk(kLegR, true);
+}
+void GameScene::PartWalk(const int part, bool b) {
+	float angle = PI / 180 * 3.0f;
 
-	worldTransforms_[kArmL].rotation_.x += angle;
-	worldTransforms_[kArmR].rotation_.x -= angle;
-	worldTransforms_[kLegL].rotation_.x -= angle;
-	worldTransforms_[kLegR].rotation_.x += angle;
+	if (b) {
+		if (a) {
+			if (worldTransforms_[part].rotation_.x >= -PI / 180 * 45.0f) {
+				worldTransforms_[part].rotation_.x -= angle;
+			} else {
+				a = false;
+			}
+		} else {
+			if (worldTransforms_[part].rotation_.x <= PI / 180 * 45.0f) {
+				worldTransforms_[part].rotation_.x += angle;
+			} else {
+				a = true;
+			}
+		}
+	} else {
+		if (a) {
+			if (worldTransforms_[part].rotation_.x <= PI / 180 * 45.0f) {
+				worldTransforms_[part].rotation_.x += angle;
+			} else {
+				a = false;
+			}
+		} else {
+			if (worldTransforms_[part].rotation_.x >= -PI / 180 * 45.0f) {
+				worldTransforms_[part].rotation_.x -= angle;
+			} else {
+				a = true;
+			}
+		}
+	}
 }
 
 void GameScene::UpdateMatrix() {

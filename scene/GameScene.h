@@ -59,10 +59,13 @@ class GameScene {
 	WorldTransform worldTransforms_[100];
 	ViewProjection viewProjection_;
 
+	bool a = false;
+
 	void Affine(WorldTransform& wt);
 
 	void MoveChara();
 	void Walk();
+	void PartWalk(const int part, bool b);
 	void UpdateMatrix();
 
 	void VPDebugText();
