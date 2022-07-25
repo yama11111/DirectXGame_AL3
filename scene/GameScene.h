@@ -16,7 +16,7 @@
 /// </summary>
 class GameScene {
 
-  public: // メンバ関数
+ public: // メンバ関数
 	/// <summary>
 	/// コンストクラタ
 	/// </summary>
@@ -42,7 +42,7 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
-  private: // メンバ変数
+ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
@@ -62,6 +62,8 @@ class GameScene {
 
 	void Affine(WorldTransform& wt);
 
+	void MoveChara();
+
 	void UpdateEye();
 	void UpdateTarget();
 	void UpdateUp();
@@ -69,6 +71,22 @@ class GameScene {
 	void UpdateFovY();
 	void UpdateNearZ();
 
+	void CharaDebugText();
 	void VPDebugText();
 	void PPDebugText();
+
+public:
+	enum PartId {
+		kRoot,
+		kSpine,
+		kChest,
+		kHead,
+		kArmL,
+		kArmR,
+		kHip,
+		kLegL,
+		kLegR,
+
+		kNumPartId
+	};
 };
