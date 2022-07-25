@@ -9,7 +9,7 @@ float Vec3::Length() const { return sqrt(x * x + y * y + z * z); }
 
 Vec3 Vec3::Nomalize() {
 	if (Length() != 0)
-		return *this /= Length();
+		return *this / Length();
 	return *this;
 }
 

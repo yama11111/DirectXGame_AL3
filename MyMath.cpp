@@ -66,11 +66,12 @@ Matrix4 MultMatrix4(const Matrix4& mat1, const Matrix4& mat2) {
 }
 
 Matrix4 Scaling(const Matrix4& mat, const Vector3& scale) {
-	Matrix4 matScale;
-	matScale.m[0][0] = scale.x;
-	matScale.m[1][1] = scale.y;
-	matScale.m[2][2] = scale.z;
-	matScale.m[3][3] = 1.0;
+	Matrix4 matScale = {
+		scale.x, 0, 0, 0,
+		0, scale.y, 0, 0,
+		0, 0, scale.z, 0,
+		0, 0, 0, 1
+	};
 
 	return MultMatrix4(mat, matScale);
 }

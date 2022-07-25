@@ -9,10 +9,10 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete debugCamera_;
-	delete player_;
-	delete front_;
+	delete playerM;
+	delete barrelM;
 	for (size_t i = 0; i < 4; i++) {
-		delete enemy_[i];
+		delete enemysM[i];
 	}
 }
 
@@ -29,14 +29,15 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection()); 
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 
-	textureHandle_ = TextureManager::Load("mario.jpg");
-	textureHandle2_ = TextureManager::Load("front.png");
+	playerTex = TextureManager::Load("mario.jpg");
+	barrelTex = TextureManager::Load("front.png");
 
-	player_ = Model::Create();
-	front_ = Model::Create();
+	playerM = Model::Create();
+	barrelM = Model::Create();
 	for (size_t i = 0; i < 4; i++) {
-		enemy_[i] = Model::Create();
+		enemysM[i] = Model::Create();
 	}
+	layM = Model::Create();
 
 	InitState();
 }
@@ -49,27 +50,27 @@ void GameScene::Update() {
 
 	debugCamera_->Update(); 
 
-	if (input_->TriggerKey(DIK_Q)) {
-		if (bioMove) bioMove = false;
-		else bioMove = true;
-	}
+	Move();
 
-	if (bioMove) {
-		BioMove();
+	if (input_->PushKey(DIK_SPACE)) isShot = true;
+	else isShot = false;
+
+	if (isShot) {
+		Shot();
+		for (int i = 0; i < 4; i++) {
+			isHit[i] = LayCollision(enemysWT[i].translation_, 5);
+		}
 	} else {
-		CameraMove();
+		for (int i = 0; i < 4; i++) {
+			isHit[i] = false;
+		}
 	}
 
-	worldTransformF_.translation_.x = worldTransformP_.translation_.x + direction.x * 4;
-	worldTransformF_.translation_.y = worldTransformP_.translation_.y + direction.y * 4;
-	worldTransformF_.translation_.z = worldTransformP_.translation_.z + direction.z * 4;
+	Affine(playerWT);
+	Affine(barrelWT);
+	Affine(layWT);
 
-	Affine(worldTransformP_);
-	Affine(worldTransformF_);
-
-	for (size_t i = 0; i < 2; i++) {
-		viewProjection_[i].UpdateMatrix();
-	}
+	view.UpdateMatrix();
 
 	DebugState();
 }
@@ -100,19 +101,13 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
-	ViewProjection v;
-	if (bioMove) {
-		v = viewProjection_[0];
-	} else {
-		v = viewProjection_[1];
-	}
 
-	player_->Draw(worldTransformP_, v, textureHandle_);
-	front_->Draw(worldTransformF_, v, textureHandle2_);
+	playerM->Draw(playerWT, view, playerTex);
+	barrelM->Draw(barrelWT, view, barrelTex);
 	for (size_t i = 0; i < 4; i++) {
-		enemy_[i]->Draw(worldTransformE_[i], v, textureHandle_);
+		if (!isHit[i]) enemysM[i]->Draw(enemysWT[i], view, playerTex);
 	}
+	if (isShot) layM->Draw(layWT, view, layTex);
 
 	//PrimitiveDrawer::GetInstance()->DrawLine3d({0.0f, 0.0f, 0.0f}, {100.0f, 100.0f, 100.0f}, {2.0f, 0.0f, 0.0f, 0.0f});
 
@@ -138,52 +133,36 @@ void GameScene::Draw() {
 }
 
 void GameScene::InitState() {
-	worldTransformP_.Initialize();
-	worldTransformF_.Initialize();
-	for (size_t i = 0; i < 4; i++) {
-		worldTransformE_[i].Initialize();
+	playerWT.Initialize();
+	barrelWT.Initialize();
+	for (int i = 0; i < 4; i++) {
+		enemysWT[i].Initialize();
 	}
-	for (size_t i = 0; i < 2; i++) {
-		viewProjection_[i].Initialize();
+	layWT.Initialize();
+	view.Initialize();
+
+	playerWT.scale_ = {1.0f, 1.0f, 1.0f};
+	playerWT.rotation_ = {0.0f, 0.0f, 0.0f};
+	playerWT.translation_ = {0.0f, 0.0f, -10.0f};
+	Affine(playerWT);
+
+	barrelWT.scale_ = {0.25f, 0.25f, 1.0f};
+	barrelWT.rotation_ = {0.0f, 0.0f, 0.0f};
+	barrelWT.translation_ = {0.0f, 0.0f, 5.0f};
+	Affine(barrelWT);
+
+	enemysWT[0].translation_ = { 5, 0, 15};
+	enemysWT[1].translation_ = {-5, 0, 15};
+	enemysWT[2].translation_ = { 15, 0, 25};
+	enemysWT[3].translation_ = {-15, 0, 25};
+	for (int i = 0; i < 4; i++) {
+		Affine(enemysWT[i]);
 	}
 
-	worldTransformP_.scale_ = {1.0f, 1.0f, 1.0f};
-	worldTransformP_.rotation_ = {0.0f, 0.0f, 0.0f};
-	worldTransformP_.translation_ = {0.0f, 0.0f, 0.0f};
-	worldTransformP_.matWorld_ = Scaling(worldTransformP_.matWorld_, worldTransformP_.scale_);
-	worldTransformP_.matWorld_ = Rotation(worldTransformP_.matWorld_, worldTransformP_.rotation_);
-	worldTransformP_.matWorld_ = Moving(worldTransformP_.matWorld_, worldTransformP_.translation_);
-	worldTransformP_.TransferMatrix();
+	layWT.scale_ = {0.5f, 0.5f, 20.0f};
+	Affine(layWT);
 
-	worldTransformF_.scale_ = {0.25f, 0.25f, 1.0f};
-	worldTransformF_.rotation_ = {0.0f, 0.0f, 0.0f};
-	worldTransformF_.translation_ = {0.0f, 0.0f, 5.0f};
-	worldTransformF_.matWorld_ = Scaling(worldTransformF_.matWorld_, worldTransformF_.scale_);
-	worldTransformF_.matWorld_ = Rotation(worldTransformF_.matWorld_, worldTransformF_.rotation_);
-	worldTransformF_.matWorld_ = Moving(worldTransformF_.matWorld_, worldTransformF_.translation_);
-	worldTransformF_.TransferMatrix();
-
-	worldTransformE_[0].translation_ = {10, 0, 0};
-	worldTransformE_[0].matWorld_ =
-	  Moving(worldTransformE_[0].matWorld_, worldTransformE_[0].translation_);
-	worldTransformE_[0].TransferMatrix();
-
-	worldTransformE_[1].translation_ = {-10, 0, 0};
-	worldTransformE_[1].matWorld_ =
-	  Moving(worldTransformE_[1].matWorld_, worldTransformE_[1].translation_);
-	worldTransformE_[1].TransferMatrix();
-
-	worldTransformE_[2].translation_ = {0, 10, 0};
-	worldTransformE_[2].matWorld_ =
-	  Moving(worldTransformE_[2].matWorld_, worldTransformE_[2].translation_);
-	worldTransformE_[2].TransferMatrix();
-
-	worldTransformE_[3].translation_ = {0, -10, 0};
-	worldTransformE_[3].matWorld_ =
-	  Moving(worldTransformE_[3].matWorld_, worldTransformE_[3].translation_);
-	worldTransformE_[3].TransferMatrix();
-
-	bioMove = true;
+	view.eye = {0, 20, -30};
 }
 
 void GameScene::Affine(WorldTransform& wt) {
@@ -199,155 +178,71 @@ void GameScene::Affine(WorldTransform& wt) {
 	wt.TransferMatrix();
 }
 
-void GameScene::BioMove() {
-	if (input_->PushKey(DIK_D)) {
-		worldTransformP_.rotation_.y += PI / 36;
-		if (worldTransformP_.rotation_.y >= 2 * PI) {
-			worldTransformP_.rotation_.y -= 2 * PI;
-		}
-	}
-	if (input_->PushKey(DIK_A)) {
-		worldTransformP_.rotation_.y -= PI / 36;
-		if (worldTransformP_.rotation_.y <= -2 * PI) {
-			worldTransformP_.rotation_.y += 2 * PI;
-		}
-	}
-	worldTransformF_.rotation_ = worldTransformP_.rotation_;
-
+void GameScene::Move() {
 	// z正面基準
-	Vec3 direction1, direction2, direction3;
+	Vec3 direction1, direction2;
 	// x,z
 	direction1 = {
-	  sin(worldTransformP_.rotation_.y + PI / 2.0f), 0.0f,
-	  cos(worldTransformP_.rotation_.y + PI / 2.0f)};
-	// x,y
-	direction2 = {sin(worldTransformP_.rotation_.z), cos(worldTransformP_.rotation_.z), 0.0f};
+	  sin(playerWT.rotation_.y + PI / 2.0f), 0.0f, cos(playerWT.rotation_.y + PI / 2.0f)};
 	// z,y
-	direction3 = {0.0f, cos(worldTransformP_.rotation_.x), sin(worldTransformP_.rotation_.x)};
+	direction2 = {0.0f, cos(playerWT.rotation_.x), sin(playerWT.rotation_.x)};
 
-	direction = direction1.Closs(direction3);
-	direction.Nomalize();
-
-	if (input_->PushKey(DIK_W)) {
-		worldTransformP_.translation_.x += direction.x * POWER;
-		worldTransformP_.translation_.y += direction.y * POWER;
-		worldTransformP_.translation_.z += direction.z * POWER;
-	}
-	if (input_->PushKey(DIK_S)) {
-		worldTransformP_.translation_.x -= direction.x * POWER;
-		worldTransformP_.translation_.y -= direction.y * POWER;
-		worldTransformP_.translation_.z -= direction.z * POWER;
-	}
-
-	viewProjection_[0].eye.x = worldTransformP_.translation_.x - direction.x * 10;
-	viewProjection_[0].eye.y = worldTransformP_.translation_.y - direction.y * 10 + 5;
-	viewProjection_[0].eye.z = worldTransformP_.translation_.z - direction.z * 10;
-
-	viewProjection_[0].target.x = worldTransformP_.translation_.x + direction.x * 10;
-	viewProjection_[0].target.y = worldTransformP_.translation_.y + direction.y * 10;
-	viewProjection_[0].target.z = worldTransformP_.translation_.z + direction.z * 10;
-}
-
-void GameScene::CameraMove() {
-	//if (input_->PushKey(DIK_UP)) {
-	//	viewProjection_[1].target.y += POWER;
-	//}
-	//if (input_->PushKey(DIK_DOWN)) {
-	//	viewProjection_[1].target.y -= POWER;
-	//}
-	//if (input_->PushKey(DIK_RIGHT)) {
-	//	viewProjection_[1].target.x += POWER;
-	//}
-	//if (input_->PushKey(DIK_LEFT)) {
-	//	viewProjection_[1].target.x -= POWER;
-	//}
-
-	if (input_->PushKey(DIK_UP)) {
-		viewProjection_[1].eye.y += POWER;
-	}
-	if (input_->PushKey(DIK_DOWN)) {
-		viewProjection_[1].eye.y -= POWER;
-	}
-	if (input_->PushKey(DIK_RIGHT)) {
-		viewProjection_[1].eye.x += POWER;
-	}
-	if (input_->PushKey(DIK_LEFT)) {
-		viewProjection_[1].eye.x -= POWER;
-	}
-
-	Vec3 t = {
-	  viewProjection_[1].target.x, viewProjection_[1].target.y, viewProjection_[1].target.z};
-	Vec3 e = {viewProjection_[1].eye.x, viewProjection_[1].eye.y, viewProjection_[1].eye.z};
-	Vec3 directionF;
-	directionF = t - e;
+	directionF = direction1.Closs(direction2);
 	directionF.Nomalize();
 
 	Vec3 y = {0, 1, 0};
 	Vec3 directionR = y.Closs(directionF);
 
 	if (input_->PushKey(DIK_W)) {
-		worldTransformP_.translation_.x += directionF.x * POWER;
-		worldTransformP_.translation_.y += directionF.y * POWER;
-		worldTransformP_.translation_.z += directionF.z * POWER;
+		playerWT.translation_.x += directionF.x * POWER;
+		playerWT.translation_.y += directionF.y * POWER;
+		playerWT.translation_.z += directionF.z * POWER;
 	}
 	if (input_->PushKey(DIK_S)) {
-		worldTransformP_.translation_.x -= directionF.x * POWER;
-		worldTransformP_.translation_.y -= directionF.y * POWER;
-		worldTransformP_.translation_.z -= directionF.z * POWER;
+		playerWT.translation_.x -= directionF.x * POWER;
+		playerWT.translation_.y -= directionF.y * POWER;
+		playerWT.translation_.z -= directionF.z * POWER;
 	}
 
 	if (input_->PushKey(DIK_D)) {
-		worldTransformP_.translation_.x += directionR.x * POWER;
-		worldTransformP_.translation_.y += directionR.y * POWER;
-		worldTransformP_.translation_.z += directionR.z * POWER;
+		playerWT.translation_.x += directionR.x * POWER;
+		playerWT.translation_.y += directionR.y * POWER;
+		playerWT.translation_.z += directionR.z * POWER;
 	}
 	if (input_->PushKey(DIK_A)) {
-		worldTransformP_.translation_.x -= directionR.x * POWER;
-		worldTransformP_.translation_.y -= directionR.y * POWER;
-		worldTransformP_.translation_.z -= directionR.z * POWER;
+		playerWT.translation_.x -= directionR.x * POWER;
+		playerWT.translation_.y -= directionR.y * POWER;
+		playerWT.translation_.z -= directionR.z * POWER;
 	}
+
+	barrelWT.translation_.x = playerWT.translation_.x + directionF.x * 2;
+	barrelWT.translation_.y = playerWT.translation_.y + directionF.y * 2;
+	barrelWT.translation_.z = playerWT.translation_.z + directionF.z * 2;
+}
+
+void GameScene::Shot() {
+	layWT.translation_.x = barrelWT.translation_.x + directionF.x * layWT.scale_.x;
+	layWT.translation_.y = barrelWT.translation_.y + directionF.y * layWT.scale_.y;
+	layWT.translation_.z = barrelWT.translation_.z + directionF.z * layWT.scale_.z;
+}
+
+bool GameScene::LayCollision(Vector3& position, const float radius) { 
+
 }
 
 void GameScene::DebugState() {
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
-	  "player : worldTransform_.translation_ : (% f, % f, % f)", worldTransformP_.translation_.x,
-	  worldTransformP_.translation_.y, worldTransformP_.translation_.z);
+	  "player : translation : (% f, % f, % f)", playerWT.translation_.x,
+	  playerWT.translation_.y, playerWT.translation_.z);
 	debugText_->SetPos(50, 70);
 	debugText_->Printf(
-	  "player : worldTransform_.rotation_ : (% f, % f, % f)", worldTransformP_.rotation_.x,
-	  worldTransformP_.rotation_.y, worldTransformP_.rotation_.z);
-
-	float x1, y1, z1, x2, y2, z2;
-	if (bioMove) {
-		x1 = viewProjection_[0].eye.x;
-		y1 = viewProjection_[0].eye.y;
-		z1 = viewProjection_[0].eye.z;
-
-		x2 = viewProjection_[0].target.x;
-		y2 = viewProjection_[0].target.y;
-		z2 = viewProjection_[0].target.z;
-	} else {
-		x1 = viewProjection_[1].eye.x;
-		y1 = viewProjection_[1].eye.y;
-		z1 = viewProjection_[1].eye.z;
-
-		x2 = viewProjection_[1].target.x;
-		y2 = viewProjection_[1].target.y;
-		z2 = viewProjection_[1].target.z;
-	}
+	  "player : rotation : (% f, % f, % f)", playerWT.rotation_.x,
+	  playerWT.rotation_.y, playerWT.rotation_.z);
 
 	debugText_->SetPos(50, 90);
-	debugText_->Printf("viewProjection_.eye : (% f, % f, % f)", x1, y1, z1);
+	debugText_->Printf("view.eye : (% f, % f, % f)", view.eye.x, view.eye.y, view.eye.z);
 	debugText_->SetPos(50, 110);
-	debugText_->Printf("viewProjection_.target : (% f, % f, % f)", x2, y2, z2);
-
-	// debugText_->SetPos(50, 140);
-	// debugText_->Printf("direction1 : (% f, % f, % f)", direction1.x, direction1.y, direction1.z);
-	// debugText_->SetPos(50, 160);
-	// debugText_->Printf("direction2 : (% f, % f, % f)", direction2.x, direction2.y, direction2.z);
-	// debugText_->SetPos(50, 180);
-	// debugText_->Printf("direction3 : (% f, % f, % f)", direction3.x, direction3.y, direction3.z);
-	// debugText_->SetPos(50, 200);
-	// debugText_->Printf("direction  : (% f, % f, % f)", direction.x, direction.y, direction.z);
+	debugText_->Printf(
+	  "view.target : (% f, % f, % f)", view.target.x, view.target.y, view.target.z);
 }

@@ -54,24 +54,31 @@ class GameScene {
 	/// </summary>
 	DebugCamera* debugCamera_ = nullptr;
 
-	uint32_t textureHandle_ = 0;
-	uint32_t textureHandle2_ = 0;
-	Model* player_ = nullptr;
-	WorldTransform worldTransformP_;
-	Model* front_ = nullptr;
-	WorldTransform worldTransformF_;
-	Model* enemy_[4] = {nullptr, nullptr, nullptr, nullptr};
-	WorldTransform worldTransformE_[4];
-	ViewProjection viewProjection_[2];
+	uint32_t playerTex = 0;
+	uint32_t barrelTex = 0;
+	uint32_t layTex = 0;
 
-	bool bioMove = false;
+	Model* playerM = nullptr;
+	WorldTransform playerWT;
+	Model* barrelM = nullptr;
+	WorldTransform barrelWT;
+	Model* enemysM[4] = {nullptr, nullptr, nullptr, nullptr};
+	WorldTransform enemysWT[4];
+	Model* layM = nullptr;
+	WorldTransform layWT;
+
+	ViewProjection view;
+
 	const float POWER = 0.5f;
-	Vec3 direction;
+	Vec3 directionF;
+	bool isShot = false;
+	bool isHit[4] = {false, false, false, false};
 
   private:
 	void InitState();
 	void Affine(WorldTransform& wt);
-	void BioMove();
-	void CameraMove();
+	void Move();
+	void Shot();
+	bool LayCollision(Vector3& position, const float radius);
 	void DebugState();
 };
