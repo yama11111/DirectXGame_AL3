@@ -61,8 +61,14 @@ class GameScene {
 	float angle = 0;
 
 	void Affine(WorldTransform& wt);
+
 	void UpdateEye();
 	void UpdateTarget();
 	void UpdateUp();
+
+	void UpdateFovY();
+	void UpdateNearZ();
+
 	void VPDebugText();
+	void PPDebugText();
 };

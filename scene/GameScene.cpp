@@ -54,12 +54,14 @@ void GameScene::Initialize() {
 
 void GameScene::Update() { 
 	
-	UpdateEye();
-	UpdateTarget();
-	UpdateUp();
+	//UpdateEye();
+	//UpdateTarget();
+	//UpdateUp();
+
+	UpdateFovY();
+	UpdateNearZ();
 
 	viewProjection_.UpdateMatrix();
-
 	debugCamera_->Update();
 }
 
@@ -110,6 +112,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	VPDebugText();
+	PPDebugText();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
@@ -146,7 +149,6 @@ void GameScene::UpdateEye() {
 
 	viewProjection_.eye += move;
 }
-
 void GameScene::UpdateTarget() {
 	Vector3 move = {0, 0, 0};
 	const float kSpeed = 0.2f;
@@ -160,7 +162,6 @@ void GameScene::UpdateTarget() {
 
 	viewProjection_.target += move;
 }
-
 void GameScene::UpdateUp() {
 	const float kSpeed = 0.05f;
 
@@ -171,6 +172,34 @@ void GameScene::UpdateUp() {
 
 	viewProjection_.up = {cosf(angle), sinf(angle), 0.0f};
 }
+
+void GameScene::UpdateFovY() {
+	if (input_->PushKey(DIK_W)) {
+		if (viewProjection_.fovAngleY <= PI) {
+			viewProjection_.fovAngleY += 0.05f;
+		}
+		if (viewProjection_.fovAngleY > PI) {
+			viewProjection_.fovAngleY = PI;
+		}
+	}
+	if (input_->PushKey(DIK_S)) {
+		if (viewProjection_.fovAngleY >= 0.01f) {
+			viewProjection_.fovAngleY -= 0.05f;
+		}
+		if (viewProjection_.fovAngleY < 0.01f) {
+			viewProjection_.fovAngleY = 0.01f;
+		}
+	}
+}
+void GameScene::UpdateNearZ() {
+	if (input_->PushKey(DIK_UP)) {
+		viewProjection_.nearZ += 0.01f;
+	}
+	if (input_->PushKey(DIK_DOWN)) {
+		viewProjection_.nearZ -= 0.01f;
+	}
+}
+
 
 void GameScene::VPDebugText() {
 	debugText_->SetPos(50, 50);
@@ -185,4 +214,13 @@ void GameScene::VPDebugText() {
 	debugText_->Printf(
 	  "target:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y,
 	  viewProjection_.up.z);
+}
+void GameScene::PPDebugText() {
+	debugText_->SetPos(50, 110);
+	debugText_->Printf(
+	  "fovAngleY(Degree):%f", viewProjection_.fovAngleY * 180 / PI);
+
+	debugText_->SetPos(50, 130);
+	debugText_->Printf(
+	  "nearZ:%f", viewProjection_.nearZ);
 }
