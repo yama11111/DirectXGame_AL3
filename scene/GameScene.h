@@ -56,37 +56,10 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransforms_[100];
+	WorldTransform wtC[10];
+	WorldTransform wtF[10];
 	ViewProjection viewProjection_;
-	float angle = 0;
 
 	void Affine(WorldTransform& wt);
-
-	void MoveChara();
-
-	void UpdateEye();
-	void UpdateTarget();
-	void UpdateUp();
-
-	void UpdateFovY();
-	void UpdateNearZ();
-
-	void CharaDebugText();
-	void VPDebugText();
-	void PPDebugText();
-
 public:
-	enum PartId {
-		kRoot,
-		kSpine,
-		kChest,
-		kHead,
-		kArmL,
-		kArmR,
-		kHip,
-		kLegL,
-		kLegR,
-
-		kNumPartId
-	};
 };
