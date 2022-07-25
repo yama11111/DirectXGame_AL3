@@ -11,6 +11,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete debugCamera_;
 	delete model_;
+	delete sprite_;
 }
 
 void GameScene::Initialize() {
@@ -27,7 +28,9 @@ void GameScene::Initialize() {
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
+	textureHandle2_ = TextureManager::Load("reticle.png");
 	model_ = Model::Create();
+	sprite_ = Sprite::Create(textureHandle2_, {1280 / 2 - 64, 720 / 2 - 64});
 
 	std::random_device seed_gen;
 	std::mt19937_64 engine(seed_gen());
@@ -35,14 +38,11 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			wt[i][j].Initialize();
-			wt[i][j].translation_ = {-20.0f, 20.0f, 0.0f};
-			wt[i][j].translation_.x += 5.0f * j;
-			wt[i][j].translation_.y -= 5.0f * i;
-			Affine(wt[i][j]);
-		}
+	for (int i = 0; i < 100; i++) {
+		wt[i].Initialize();
+		wt[i].rotation_ = {dist(engine), dist(engine), dist(engine)};
+		wt[i].translation_ = {dist2(engine), dist2(engine), dist2(engine)};
+		Affine(wt[i]);
 	}
 
 	vp.Initialize();
@@ -51,19 +51,17 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	if (input_->PushKey(DIK_UP)) {
-		vp.fovAngleY -= 0.01f;
-		if (vp.fovAngleY <= 0.01) vp.fovAngleY = 0.01f;
-	}
-	if (input_->PushKey(DIK_DOWN)) {
-		vp.fovAngleY += 0.01f;
-		if (vp.fovAngleY >= PI) vp.fovAngleY = PI;
+	if (input_->TriggerKey(DIK_SPACE)) {
+		s = !s;
 	}
 
-	if (input_->PushKey(DIK_W)) vp.target.y += 0.1f;
-	if (input_->PushKey(DIK_S)) vp.target.y -= 0.1f;
-	if (input_->PushKey(DIK_D)) vp.target.x += 0.1f;
-	if (input_->PushKey(DIK_A)) vp.target.x -= 0.1f;
+	if (s) vp.fovAngleY = PI / 180 * 20.0f;
+	else vp.fovAngleY = PI / 180 * 40.0f;
+
+	if (input_->PushKey(DIK_UP)) vp.target.y += 0.1f;
+	if (input_->PushKey(DIK_DOWN)) vp.target.y -= 0.1f;
+	if (input_->PushKey(DIK_RIGHT)) vp.target.x += 0.1f;
+	if (input_->PushKey(DIK_LEFT)) vp.target.x -= 0.1f;
 
 	vp.UpdateMatrix();
 	debugCamera_->Update();
@@ -95,10 +93,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			model_->Draw(wt[i][j], vp, textureHandle_);
-		}
+	for (int i = 0; i < 100; i++) {
+		model_->Draw(wt[i], vp, textureHandle_);
 	}
 
 	// 3Dオブジェクト描画後処理
@@ -112,6 +108,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	if (s) sprite_->Draw();
 
 	debugText_->SetPos(50, 50);
 	debugText_->Printf("eye : (%f, %f, %f)", 

@@ -54,11 +54,15 @@ class GameScene {
 	DebugCamera* debugCamera_ = nullptr;
 
 	uint32_t textureHandle_ = 0;
+	uint32_t textureHandle2_ = 0;
 	Model* model_ = nullptr;
+	Sprite* sprite_ = nullptr;
 
-	WorldTransform wt[9][9];
+	WorldTransform wt[100];
 	
 	ViewProjection vp;
+
+	bool s = false;
 
 	void Affine(WorldTransform& wt);
 };
