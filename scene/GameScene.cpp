@@ -38,28 +38,16 @@ void GameScene::Initialize() {
 	wt.Initialize();
 
 	vp.Initialize();
-	for (int i = 0; i < 3; i++) {
-		vps[i].Initialize();
-	}
-
-	vps[0].eye = {-9.0f, -3.0f, -1.5f};
-	vps[1].eye = {-9.0f, -3.0f, -9.0f};
-	vps[2].eye = {6.0f, 0.0f, -4.0f};
-
-	vp = vps[0];
 }
 
 void GameScene::Update() { 
-	if (input_->TriggerKey(DIK_SPACE)) {
-		v++;
-		if (v >= 3) v = 0;
-		vp = vps[v];
-	}
+
+	angle += PI / 72.0f;
+	if (angle >= PI * 2) angle -= PI * 2;
+
+	vp.eye = {cosf(angle) * 10.0f, 0.0f, sinf(angle) * 10.0f};
 
 	vp.UpdateMatrix();
-	for (int i = 0; i < 3; i++) {
-		vps[i].UpdateMatrix();
-	}
 	debugCamera_->Update();
 }
 
@@ -89,7 +77,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
+
 	model_->Draw(wt, vp, textureHandle_);
 
 	// 3Dオブジェクト描画後処理
@@ -104,19 +92,15 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	for (int i = 0; i < 3; i++) {
-		debugText_->SetPos(50, 50 + 100 * i);
-		debugText_->Printf("Camera%i", i);
-		debugText_->SetPos(50, 70 + 100 * i);
-		debugText_->Printf("eye : (%f, %f, %f)", 
-			vps[i].eye.x, vps[i].eye.y, vps[i].eye.z);
-		debugText_->SetPos(50, 90 + 100 * i);
-		debugText_->Printf("target : (%f, %f, %f)", 
-			vps[i].target.x, vps[i].target.y, vps[i].target.z);
-		debugText_->SetPos(50, 110 + 100 * i);
-		debugText_->Printf("up : (%f, %f, %f)", 
-			vps[i].up.x, vps[i].up.y, vps[i].up.z);
-	}
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("eye : (%f, %f, %f)", 
+		vp.eye.x, vp.eye.y, vp.eye.z);
+	debugText_->SetPos(50, 90);
+	debugText_->Printf("target : (%f, %f, %f)", 
+		vp.target.x, vp.target.y, vp.target.z);
+	debugText_->SetPos(50, 110);
+	debugText_->Printf("up : (%f, %f, %f)", 
+		vp.up.x, vp.up.y, vp.up.z);
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);

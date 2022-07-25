@@ -57,11 +57,8 @@ class GameScene {
 	Model* model_ = nullptr;
 
 	WorldTransform wt;
-
+	
 	ViewProjection vp;
-	ViewProjection vps[3];
-	int v = 0;
-
 	float angle = 0.0f;
 
 	void Affine(WorldTransform& wt);
