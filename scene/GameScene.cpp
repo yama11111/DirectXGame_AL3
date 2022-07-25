@@ -35,41 +35,35 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
-	for (int i = 0; i < 3; i++) {
-		wt[i].Initialize();
-	}
-
-	wt[0].translation_ = {0.0f, 5.0f, 0.0f};
-	wt[1].translation_ = {-4.0f, -2.5f, 0.0f};
-	wt[2].translation_ = {4.0f, -2.5f, 0.0f};
-
-	for (int i = 0; i < 3; i++) {
-		Affine(wt[i]);
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			wt[i][j].Initialize();
+			wt[i][j].translation_ = {-20.0f, 20.0f, 0.0f};
+			wt[i][j].translation_.x += 5.0f * j;
+			wt[i][j].translation_.y -= 5.0f * i;
+			Affine(wt[i][j]);
+		}
 	}
 
 	vp.Initialize();
-	vp.eye.z = -25.0f;
-	p = vp.target = wt[0].translation_;
+	vp.eye.z = -75.0;
 }
 
-void GameScene::Update() { 
-	if (input_->TriggerKey(DIK_SPACE)) {
-		p = wt[a].translation_;
-		a++;
-		if (a >= 3) a = 0;
-		s = true;
-		t = 0;
+void GameScene::Update() {
+
+	if (input_->PushKey(DIK_UP)) {
+		vp.fovAngleY -= 0.01f;
+		if (vp.fovAngleY <= 0.01) vp.fovAngleY = 0.01f;
 	}
-	if (s) {
-		t += 0.05f;
-		if (t >= 1.0f) {
-			t = 1.0f;
-			s = false;
-		}
-		vp.target.x = lerp(p.x, wt[a].translation_.x, t);
-		vp.target.y = lerp(p.y, wt[a].translation_.y, t);
-		vp.target.z = lerp(p.z, wt[a].translation_.z, t);
+	if (input_->PushKey(DIK_DOWN)) {
+		vp.fovAngleY += 0.01f;
+		if (vp.fovAngleY >= PI) vp.fovAngleY = PI;
 	}
+
+	if (input_->PushKey(DIK_W)) vp.target.y += 0.1f;
+	if (input_->PushKey(DIK_S)) vp.target.y -= 0.1f;
+	if (input_->PushKey(DIK_D)) vp.target.x += 0.1f;
+	if (input_->PushKey(DIK_A)) vp.target.x -= 0.1f;
 
 	vp.UpdateMatrix();
 	debugCamera_->Update();
@@ -101,8 +95,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	for (int i = 0; i < 3; i++) {
-		model_->Draw(wt[i], vp, textureHandle_);
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			model_->Draw(wt[i][j], vp, textureHandle_);
+		}
 	}
 
 	// 3Dオブジェクト描画後処理
@@ -126,6 +122,12 @@ void GameScene::Draw() {
 	debugText_->SetPos(50, 90);
 	debugText_->Printf("up : (%f, %f, %f)", 
 		vp.up.x, vp.up.y, vp.up.z);
+	debugText_->SetPos(50, 110);
+	debugText_->Printf("fovAngleY(Degree) : %f", 
+		vp.fovAngleY * 180 / PI);
+	debugText_->SetPos(50, 130);
+	debugText_->Printf("nearZ : %f", 
+		vp.nearZ);
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
@@ -148,5 +150,3 @@ void GameScene::Affine(WorldTransform& wt) {
 	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
 	wt.TransferMatrix();
 }
-
-float GameScene::lerp(const double a, const double b, const double t) { return a + t * (b - a); }

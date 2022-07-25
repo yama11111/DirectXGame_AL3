@@ -56,16 +56,9 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform wt[3];
+	WorldTransform wt[9][9];
 	
 	ViewProjection vp;
-	int a = 0;
-	bool s;
-	Vector3 p;
-	float t = 0.0f;
 
 	void Affine(WorldTransform& wt);
-	float lerp(const double a, const double b, const double t);
-
-  public:
 };
