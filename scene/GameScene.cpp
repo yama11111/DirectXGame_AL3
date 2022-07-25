@@ -35,17 +35,28 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
-	wt.Initialize();
+	for (int i = 0; i < 3; i++) {
+		wt[i].Initialize();
+	}
+
+	wt[0].translation_ = {0.0f, 5.0f, 0.0f};
+	wt[1].translation_ = {-4.0f, -2.5f, 0.0f};
+	wt[2].translation_ = {4.0f, -2.5f, 0.0f};
+
+	for (int i = 0; i < 3; i++) {
+		Affine(wt[i]);
+	}
 
 	vp.Initialize();
+	vp.eye.z = -25.0f;
 }
 
 void GameScene::Update() { 
-
-	angle += PI / 72.0f;
-	if (angle >= PI * 2) angle -= PI * 2;
-
-	vp.eye = {cosf(angle) * 10.0f, 0.0f, sinf(angle) * 10.0f};
+	if (input_->TriggerKey(DIK_SPACE)) {
+		a++;
+		if (a >= 3) a = 0;
+		vp.target = wt[a].translation_;
+	}
 
 	vp.UpdateMatrix();
 	debugCamera_->Update();
@@ -77,8 +88,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
-	model_->Draw(wt, vp, textureHandle_);
+	for (int i = 0; i < 3; i++) {
+		model_->Draw(wt[i], vp, textureHandle_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -95,10 +107,10 @@ void GameScene::Draw() {
 	debugText_->SetPos(50, 50);
 	debugText_->Printf("eye : (%f, %f, %f)", 
 		vp.eye.x, vp.eye.y, vp.eye.z);
-	debugText_->SetPos(50, 90);
+	debugText_->SetPos(50, 70);
 	debugText_->Printf("target : (%f, %f, %f)", 
 		vp.target.x, vp.target.y, vp.target.z);
-	debugText_->SetPos(50, 110);
+	debugText_->SetPos(50, 90);
 	debugText_->Printf("up : (%f, %f, %f)", 
 		vp.up.x, vp.up.y, vp.up.z);
 
