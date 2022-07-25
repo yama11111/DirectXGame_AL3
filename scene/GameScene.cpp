@@ -29,8 +29,10 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	textureHandle2_ = TextureManager::Load("reticle.png");
+	textureHandle3_ = TextureManager::Load("scope.png");
 	model_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle2_, {1280 / 2 - 64, 720 / 2 - 64});
+	sprite2_ = Sprite::Create(textureHandle3_, {0, 0});
 
 	std::random_device seed_gen;
 	std::mt19937_64 engine(seed_gen());
@@ -51,17 +53,24 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	if (input_->PushKey(DIK_SPACE)) {
-		s = true;
-		t += 0.1f;
-		if (t >= 1.0f) t = 1.0f;
-	} else {
-		s = false;
-		t -= 0.1f;
-		if (t <= 0.0f) t = 0.0f;
+	if (input_->TriggerKey(DIK_SPACE)) {
+		s = !s;
 	}
 
-	vp.fovAngleY = lerp(PI / 180 * 40.0f, PI / 180 * 20.0f, t);
+	if (s) {
+		if (input_->TriggerKey(DIK_W)) z = !z;
+		if (input_->TriggerKey(DIK_S)) z = !z;
+		if (z) {
+			t += 0.1f;
+			if (t >= 1.0f) t = 1.0f;
+		} else {
+			t -= 0.1f;
+			if (t <= 0.0f) t = 0.0f;
+		}
+		vp.fovAngleY = lerp(PI / 180 * 30.0f, PI / 180 * 15.0f, t);
+	} else {
+		vp.fovAngleY = PI / 180 * 90.0f;
+	}
 
 	if (input_->PushKey(DIK_UP)) vp.target.y += 0.1f;
 	if (input_->PushKey(DIK_DOWN)) vp.target.y -= 0.1f;
@@ -114,7 +123,16 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	if (s) sprite_->Draw();
+	if (s) {
+		sprite_->Draw();
+		sprite2_->Draw();
+	}
+
+	if (s) {
+		debugText_->SetPos(1000, 70);
+		if (z) debugText_->Printf("x8");
+		else debugText_->Printf("x4");
+	}
 
 	debugText_->SetPos(50, 50);
 	debugText_->Printf("eye : (%f, %f, %f)", 

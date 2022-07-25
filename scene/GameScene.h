@@ -55,14 +55,17 @@ class GameScene {
 
 	uint32_t textureHandle_ = 0;
 	uint32_t textureHandle2_ = 0;
+	uint32_t textureHandle3_ = 0;
 	Model* model_ = nullptr;
 	Sprite* sprite_ = nullptr;
+	Sprite* sprite2_ = nullptr;
 
 	WorldTransform wt[100];
 	
 	ViewProjection vp;
 
 	bool s = false;
+	bool z = false;
 	float t = 0.0f;
 
 	void Affine(WorldTransform& wt);
