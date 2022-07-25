@@ -56,8 +56,11 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform wt[10];
-	ViewProjection viewProjection_;
+	WorldTransform wt;
+
+	ViewProjection vp;
+	ViewProjection vps[3];
+	int v = 0;
 
 	float angle = 0.0f;
 
