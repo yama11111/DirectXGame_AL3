@@ -35,25 +35,17 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
-			wt1[i][j].Initialize();
-			wt1[i][j].translation_.x = -20.0f;
-			wt1[i][j].translation_.x += 5.0f * j;
-			wt1[i][j].translation_.y = -20.0f;
-			wt1[i][j].translation_.y += 10.0f * i;
-			Affine(wt1[i][j]);
-		}
-	}
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 5; j++) {
-			wt2[i][j].Initialize();
-			wt2[i][j].translation_.x = -20.0f;
-			wt2[i][j].translation_.x += 10.0f * j;
-			wt2[i][j].translation_.y = -15.0f;
-			wt2[i][j].translation_.y += 10.0f * i;
-			Affine(wt2[i][j]);
+			for (int k = 0; k < 9; k++) {
+				wt[i][j][k].Initialize();
+				wt[i][j][k].translation_.z += 5.0f * k;
+				wt[i][j][k].translation_.x = -20.0f;
+				wt[i][j][k].translation_.x += 5.0f * j;
+				wt[i][j][k].translation_.y = -20.0f;
+				wt[i][j][k].translation_.y += 5.0f * i;
+				Affine(wt[i][j][k]);
+			}
 		}
 	}
 
@@ -96,15 +88,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	/// 
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 9; j++) {
-			model_->Draw(wt1[i][j], viewProjection_, textureHandle_);
-		}
-	}
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 5; j++) {
-			model_->Draw(wt2[i][j], viewProjection_, textureHandle_);
+	for (int k = 0; k < 9; k++) {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				model_->Draw(wt[i][j][k], viewProjection_, textureHandle_);
+			}
 		}
 	}
 
