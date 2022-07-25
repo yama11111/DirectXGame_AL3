@@ -60,7 +60,12 @@ class GameScene {
 	
 	ViewProjection vp;
 	int a = 0;
+	bool s;
+	Vector3 p;
+	float t = 0.0f;
 
 	void Affine(WorldTransform& wt);
-public:
+	float lerp(const double a, const double b, const double t);
+
+  public:
 };

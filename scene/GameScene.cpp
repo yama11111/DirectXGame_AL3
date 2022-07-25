@@ -49,13 +49,26 @@ void GameScene::Initialize() {
 
 	vp.Initialize();
 	vp.eye.z = -25.0f;
+	p = vp.target = wt[0].translation_;
 }
 
 void GameScene::Update() { 
 	if (input_->TriggerKey(DIK_SPACE)) {
+		p = wt[a].translation_;
 		a++;
 		if (a >= 3) a = 0;
-		vp.target = wt[a].translation_;
+		s = true;
+		t = 0;
+	}
+	if (s) {
+		t += 0.05f;
+		if (t >= 1.0f) {
+			t = 1.0f;
+			s = false;
+		}
+		vp.target.x = lerp(p.x, wt[a].translation_.x, t);
+		vp.target.y = lerp(p.y, wt[a].translation_.y, t);
+		vp.target.z = lerp(p.z, wt[a].translation_.z, t);
 	}
 
 	vp.UpdateMatrix();
@@ -135,3 +148,5 @@ void GameScene::Affine(WorldTransform& wt) {
 	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
 	wt.TransferMatrix();
 }
+
+float GameScene::lerp(const double a, const double b, const double t) { return a + t * (b - a); }
