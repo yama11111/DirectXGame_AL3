@@ -58,22 +58,16 @@ class GameScene {
 
 	WorldTransform worldTransforms_[100];
 	ViewProjection viewProjection_;
-	float angle = 0;
 
 	void Affine(WorldTransform& wt);
 
 	void MoveChara();
+	void Walk();
+	void UpdateMatrix();
 
-	void UpdateEye();
-	void UpdateTarget();
-	void UpdateUp();
-
-	void UpdateFovY();
-	void UpdateNearZ();
-
-	void CharaDebugText();
 	void VPDebugText();
 	void PPDebugText();
+	void CharaDebugText();
 
 public:
 	enum PartId {

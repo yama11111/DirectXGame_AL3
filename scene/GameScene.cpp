@@ -81,21 +81,18 @@ void GameScene::Initialize() {
 	worldTransforms_[kLegR].translation_ = {-4.5f, -4.5f, 0};
 	worldTransforms_[kLegR].parent_ = &worldTransforms_[kHip];
 
+	worldTransforms_[kRoot].rotation_.y = PI / 180 * 30.0f;
+
 	viewProjection_.Initialize();
 
 }
 
 void GameScene::Update() { 
-	
-	//UpdateEye();
-	//UpdateTarget();
-	//UpdateUp();
-
-	//UpdateFovY();
-	//UpdateNearZ();
 
 	MoveChara();
+	Walk();
 
+	UpdateMatrix();
 	viewProjection_.UpdateMatrix();
 	debugCamera_->Update();
 }
@@ -146,9 +143,9 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
+	VPDebugText();
+	PPDebugText();
 	CharaDebugText();
-	//VPDebugText();
-	//PPDebugText();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
@@ -176,10 +173,10 @@ void GameScene::MoveChara() {
 	Vector3 move = {0, 0, 0};
 	const float kSpeed = 0.2f;
 
-	if (input_->PushKey(DIK_D)) {
+	if (input_->PushKey(DIK_RIGHT)) {
 		move.x += kSpeed;
 	}
-	if (input_->PushKey(DIK_A)) {
+	if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kSpeed;
 	}
 
@@ -188,111 +185,35 @@ void GameScene::MoveChara() {
 	float angle2 = 0.0f;
 	const float kSpeed2 = 0.05f;
 
-	if (input_->PushKey(DIK_I)) {
+	if (input_->PushKey(DIK_A)) {
 		angle2 += kSpeed2;
 	}
-	if (input_->PushKey(DIK_U)) {
+	if (input_->PushKey(DIK_D)) {
 		angle2 -= kSpeed2;
 	}
 
-	worldTransforms_[kChest].rotation_.y += angle2;
+	worldTransforms_[kRoot].rotation_.y += angle2;
+}
 
-	float angle3 = 0.0f;
+void GameScene::Walk() {
+	float angle = PI / 180 * 5.0f;
 
-	if (input_->PushKey(DIK_K)) {
-		angle3 += kSpeed2;
-	}
-	if (input_->PushKey(DIK_J)) {
-		angle3 -= kSpeed2;
-	}
+	worldTransforms_[kArmL].rotation_.x += angle;
+	worldTransforms_[kArmR].rotation_.x -= angle;
+	worldTransforms_[kLegL].rotation_.x -= angle;
+	worldTransforms_[kLegR].rotation_.x += angle;
+}
 
-	worldTransforms_[kHip].rotation_.y += angle3;
-
+void GameScene::UpdateMatrix() {
 	for (int i = 0; i < kNumPartId; i++) {
 		Affine(worldTransforms_[i]);
 		if (worldTransforms_[i].parent_ != nullptr) {
-			worldTransforms_[i].matWorld_ *= 
-				worldTransforms_[i].parent_->matWorld_;
+			worldTransforms_[i].matWorld_ *= worldTransforms_[i].parent_->matWorld_;
 			worldTransforms_[i].TransferMatrix();
 		}
 	}
 }
 
-void GameScene::UpdateEye() {
-	Vector3 move = {0, 0, 0};
-	const float kSpeed = 0.2f;
-
-	if (input_->PushKey(DIK_W)) {
-		move.z += kSpeed;
-	}
-	if (input_->PushKey(DIK_S)) {
-		move.z -= kSpeed;
-	}
-
-	viewProjection_.eye += move;
-}
-void GameScene::UpdateTarget() {
-	Vector3 move = {0, 0, 0};
-	const float kSpeed = 0.2f;
-
-	if (input_->PushKey(DIK_LEFT)) {
-		move.x += kSpeed;
-	}
-	if (input_->PushKey(DIK_RIGHT)) {
-		move.x -= kSpeed;
-	}
-
-	viewProjection_.target += move;
-}
-void GameScene::UpdateUp() {
-	const float kSpeed = 0.05f;
-
-	if (input_->PushKey(DIK_SPACE)) {
-		angle += kSpeed;
-		angle = fmodf(angle, PI * 2.0f);
-	}
-
-	viewProjection_.up = {cosf(angle), sinf(angle), 0.0f};
-}
-
-void GameScene::UpdateFovY() {
-	if (input_->PushKey(DIK_W)) {
-		if (viewProjection_.fovAngleY <= PI) {
-			viewProjection_.fovAngleY += 0.05f;
-		}
-		if (viewProjection_.fovAngleY > PI) {
-			viewProjection_.fovAngleY = PI;
-		}
-	}
-	if (input_->PushKey(DIK_S)) {
-		if (viewProjection_.fovAngleY >= 0.01f) {
-			viewProjection_.fovAngleY -= 0.05f;
-		}
-		if (viewProjection_.fovAngleY < 0.01f) {
-			viewProjection_.fovAngleY = 0.01f;
-		}
-	}
-}
-void GameScene::UpdateNearZ() {
-	if (input_->PushKey(DIK_UP)) {
-		viewProjection_.nearZ += 0.01f;
-	}
-	if (input_->PushKey(DIK_DOWN)) {
-		viewProjection_.nearZ -= 0.01f;
-	}
-}
-
-void GameScene::CharaDebugText() {
-	for (int i = 0; i < kNumPartId; i++) {
-		debugText_->SetPos(50, 50 + 20 * i);
-		debugText_->Printf(
-			"translation[%i]:(%f,%f,%f)", 
-			i,
-			worldTransforms_[i].translation_.x, 
-			worldTransforms_[i].translation_.y, 
-			worldTransforms_[i].translation_.z);
-	}
-}
 void GameScene::VPDebugText() {
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
@@ -315,4 +236,12 @@ void GameScene::PPDebugText() {
 	debugText_->SetPos(50, 130);
 	debugText_->Printf(
 	  "nearZ:%f", viewProjection_.nearZ);
+}
+void GameScene::CharaDebugText() {
+	debugText_->SetPos(50, 150);
+	debugText_->Printf(
+		"Root:(%f,%f,%f)", 
+		worldTransforms_[kRoot].translation_.x, 
+		worldTransforms_[kRoot].translation_.y, 
+		worldTransforms_[kRoot].translation_.z);
 }
