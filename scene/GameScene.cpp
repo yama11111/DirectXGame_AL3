@@ -4,6 +4,7 @@
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 #include "MyCalc.h"
+#include <random>
 
 GameScene::GameScene() {}
 
@@ -28,13 +29,24 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
 
-	worldTransform_.Initialize();
+	std::random_device seed_gen;
+	std::mt19937_64 engine(seed_gen());
+	
+	std::uniform_real_distribution<float> dist(0, 2 * PI);
+	std::uniform_real_distribution<float> dist2(-10, 10);
+	
+	for (WorldTransform& worldTransform : worldTransforms_) {
+		worldTransform.Initialize();
 
-	worldTransform_.scale_ = {5.0, 1.0, 1.0};
-	worldTransform_.rotation_ = {0.0f, PI / 4, 0.0f};
-	worldTransform_.translation_ = {0, 10, 0};
-
-	Affine(worldTransform_);
+		worldTransform.scale_ = {1.0f, 1.0f, 1.0f};
+		worldTransform.rotation_ = {dist(engine), dist(engine), dist(engine)};
+		worldTransform.translation_ = {
+			dist2(engine),
+			dist2(engine), 
+			dist2(engine)
+		};
+		Affine(worldTransform);
+	}
 
 	viewProjection_.Initialize();
 
@@ -42,6 +54,12 @@ void GameScene::Initialize() {
 
 void GameScene::Update() { 
 	
+	UpdateEye();
+	UpdateTarget();
+	UpdateUp();
+
+	viewProjection_.UpdateMatrix();
+
 	debugCamera_->Update();
 }
 
@@ -72,7 +90,10 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	for (WorldTransform& worldTransform : worldTransforms_) {
+
+		model_->Draw(worldTransform, viewProjection_, textureHandle_);
+	}
 
 	//PrimitiveDrawer::GetInstance()->DrawLine3d({0.0f, 0.0f, 0.0f}, {100.0f, 100.0f, 100.0f}, {2.0f, 0.0f, 0.0f, 0.0f});
 
@@ -87,6 +108,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	VPDebugText();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
@@ -108,4 +131,58 @@ void GameScene::Affine(WorldTransform& wt) {
 	wt.matWorld_ = Rotation(wt.matWorld_, wt.rotation_);
 	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
 	wt.TransferMatrix();
+}
+
+void GameScene::UpdateEye() {
+	Vector3 move = {0, 0, 0};
+	const float kSpeed = 0.2f;
+
+	if (input_->PushKey(DIK_W)) {
+		move.z += kSpeed;
+	}
+	if (input_->PushKey(DIK_S)) {
+		move.z -= kSpeed;
+	}
+
+	viewProjection_.eye += move;
+}
+
+void GameScene::UpdateTarget() {
+	Vector3 move = {0, 0, 0};
+	const float kSpeed = 0.2f;
+
+	if (input_->PushKey(DIK_LEFT)) {
+		move.x += kSpeed;
+	}
+	if (input_->PushKey(DIK_RIGHT)) {
+		move.x -= kSpeed;
+	}
+
+	viewProjection_.target += move;
+}
+
+void GameScene::UpdateUp() {
+	const float kSpeed = 0.05f;
+
+	if (input_->PushKey(DIK_SPACE)) {
+		angle += kSpeed;
+		angle = fmodf(angle, PI * 2.0f);
+	}
+
+	viewProjection_.up = {cosf(angle), sinf(angle), 0.0f};
+}
+
+void GameScene::VPDebugText() {
+	debugText_->SetPos(50, 50);
+	debugText_->Printf(
+	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+
+	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+	  "target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
+
+	debugText_->SetPos(50, 90);
+	debugText_->Printf(
+	  "target:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y,
+	  viewProjection_.up.z);
 }
