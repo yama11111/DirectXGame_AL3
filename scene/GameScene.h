@@ -63,6 +63,8 @@ class GameScene {
 	ViewProjection vp;
 
 	bool s = false;
+	float t = 0.0f;
 
 	void Affine(WorldTransform& wt);
+	double lerp(const double a, const double b, const double t);
 };

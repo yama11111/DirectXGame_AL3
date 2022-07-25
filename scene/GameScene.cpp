@@ -51,12 +51,17 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	if (input_->TriggerKey(DIK_SPACE)) {
-		s = !s;
+	if (input_->PushKey(DIK_SPACE)) {
+		s = true;
+		t += 0.1f;
+		if (t >= 1.0f) t = 1.0f;
+	} else {
+		s = false;
+		t -= 0.1f;
+		if (t <= 0.0f) t = 0.0f;
 	}
 
-	if (s) vp.fovAngleY = PI / 180 * 20.0f;
-	else vp.fovAngleY = PI / 180 * 40.0f;
+	vp.fovAngleY = lerp(PI / 180 * 40.0f, PI / 180 * 20.0f, t);
 
 	if (input_->PushKey(DIK_UP)) vp.target.y += 0.1f;
 	if (input_->PushKey(DIK_DOWN)) vp.target.y -= 0.1f;
@@ -148,3 +153,5 @@ void GameScene::Affine(WorldTransform& wt) {
 	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
 	wt.TransferMatrix();
 }
+
+double GameScene::lerp(const double a, const double b, const double t) { return a + t * (b - a); }
