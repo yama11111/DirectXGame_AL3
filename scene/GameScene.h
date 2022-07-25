@@ -56,8 +56,8 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform wtC[10];
-	WorldTransform wtF[10];
+	WorldTransform wt1[5][9];
+	WorldTransform wt2[4][5];
 	ViewProjection viewProjection_;
 
 	void Affine(WorldTransform& wt);

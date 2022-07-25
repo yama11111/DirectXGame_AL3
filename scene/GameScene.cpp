@@ -34,28 +34,32 @@ void GameScene::Initialize() {
 	
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
-	
-	int j = 0;
-	for (int i = 0; i < 10; i++) {
-		wtC[i].Initialize();
-		wtF[i].Initialize();
 
-		if (i < 5) {
-			wtC[i].translation_ = {2.0f * i, -2.75f, -45.0f};
-			wtF[i].translation_ = {2.0f * i, 2.75f, -45.0f};
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 9; j++) {
+			wt1[i][j].Initialize();
+			wt1[i][j].translation_.x = -20.0f;
+			wt1[i][j].translation_.x += 5.0f * j;
+			wt1[i][j].translation_.y = -20.0f;
+			wt1[i][j].translation_.y += 10.0f * i;
+			Affine(wt1[i][j]);
 		}
+	}
 
-		if (i >= 5) {
-			wtC[i].translation_ = {-2.0f * j, -2.75f, -45.0f};
-			wtF[i].translation_ = {-2.0f * j, 2.75f, -45.0f};
-			j++;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 5; j++) {
+			wt2[i][j].Initialize();
+			wt2[i][j].translation_.x = -20.0f;
+			wt2[i][j].translation_.x += 10.0f * j;
+			wt2[i][j].translation_.y = -15.0f;
+			wt2[i][j].translation_.y += 10.0f * i;
+			Affine(wt2[i][j]);
 		}
-
-		Affine(wtC[i]);
-		Affine(wtF[i]);
 	}
 
 	viewProjection_.Initialize();
+
+	viewProjection_.eye.z = -75.0f;
 }
 
 void GameScene::Update() { 
@@ -91,11 +95,17 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	/// 
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 9; j++) {
+			model_->Draw(wt1[i][j], viewProjection_, textureHandle_);
+		}
+	}
 
-	for (int i = 0; i < 10; i++) {
-
-		model_->Draw(wtC[i], viewProjection_, textureHandle_);
-		model_->Draw(wtF[i], viewProjection_, textureHandle_);
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 5; j++) {
+			model_->Draw(wt2[i][j], viewProjection_, textureHandle_);
+		}
 	}
 
 	// 3Dオブジェクト描画後処理
