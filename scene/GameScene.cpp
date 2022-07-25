@@ -35,18 +35,8 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			for (int k = 0; k < 9; k++) {
-				wt[i][j][k].Initialize();
-				wt[i][j][k].translation_.z += 5.0f * k;
-				wt[i][j][k].translation_.x = -20.0f;
-				wt[i][j][k].translation_.x += 5.0f * j;
-				wt[i][j][k].translation_.y = -20.0f;
-				wt[i][j][k].translation_.y += 5.0f * i;
-				Affine(wt[i][j][k]);
-			}
-		}
+	for (int i = 0; i < 10; i++) {
+		wt[i].Initialize();
 	}
 
 	viewProjection_.Initialize();
@@ -55,7 +45,15 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() { 
-	
+
+	angle += PI / 36.0f;
+	if (angle >= PI * 2.0f) angle -= PI * 2.0f;
+
+	for (int i = 0; i < 10; i++) {
+		wt[i].translation_ = 
+		{cosf(angle - PI / 5 * i) * 10, sinf(angle - PI / 5 * i) * 10, 0.0f};
+		Affine(wt[i]);
+	}
 
 	viewProjection_.UpdateMatrix();
 	debugCamera_->Update();
@@ -88,12 +86,8 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	/// 
-	for (int k = 0; k < 9; k++) {
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				model_->Draw(wt[i][j][k], viewProjection_, textureHandle_);
-			}
-		}
+	for (int i = 0; i < 10; i++) {
+		model_->Draw(wt[i], viewProjection_, textureHandle_);
 	}
 
 	// 3Dオブジェクト描画後処理

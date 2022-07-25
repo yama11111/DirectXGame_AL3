@@ -56,8 +56,10 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform wt[9][9][9];
+	WorldTransform wt[10];
 	ViewProjection viewProjection_;
+
+	float angle = 0.0f;
 
 	void Affine(WorldTransform& wt);
 public:
