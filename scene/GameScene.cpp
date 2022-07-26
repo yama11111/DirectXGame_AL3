@@ -34,18 +34,6 @@ void GameScene::Initialize() {
 	
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
-	
-	//for (WorldTransform& worldTransform : worldTransforms_) {
-	//	worldTransform.Initialize();
-	//	worldTransform.scale_ = {1.0f, 1.0f, 1.0f};
-	//	worldTransform.rotation_ = {dist(engine), dist(engine), dist(engine)};
-	//	worldTransform.translation_ = {
-	//		dist2(engine),
-	//		dist2(engine), 
-	//		dist2(engine)
-	//	};
-	//	Affine(worldTransform);
-	//}
 
 	worldTransforms_[kRoot].Initialize();
 
@@ -65,21 +53,37 @@ void GameScene::Initialize() {
 	worldTransforms_[kArmL].translation_ = {4.5f, 0, 0};
 	worldTransforms_[kArmL].parent_ = &worldTransforms_[kChest];
 
+	worldTransforms_[kHandL].Initialize();
+	worldTransforms_[kHandL].translation_ = {0, -4.5f, 0};
+	worldTransforms_[kHandL].parent_ = &worldTransforms_[kArmL];
+
 	worldTransforms_[kArmR].Initialize();
 	worldTransforms_[kArmR].translation_ = {-4.5f, 0, 0};
 	worldTransforms_[kArmR].parent_ = &worldTransforms_[kChest];
+
+	worldTransforms_[kHandR].Initialize();
+	worldTransforms_[kHandR].translation_ = {0, -4.5f, 0};
+	worldTransforms_[kHandR].parent_ = &worldTransforms_[kArmR];
 
 	worldTransforms_[kHip].Initialize();
 	worldTransforms_[kHip].translation_ = {0, -4.5f, 0};
 	worldTransforms_[kHip].parent_ = &worldTransforms_[kSpine];
 
 	worldTransforms_[kLegL].Initialize();
-	worldTransforms_[kLegL].translation_ = {4.5f, -4.5f, 0};
+	worldTransforms_[kLegL].translation_ = {3.0f, -4.5f, 0};
 	worldTransforms_[kLegL].parent_ = &worldTransforms_[kHip];
 
+	worldTransforms_[kFootL].Initialize();
+	worldTransforms_[kFootL].translation_ = {0, -4.5f, 0};
+	worldTransforms_[kFootL].parent_ = &worldTransforms_[kLegL];
+
 	worldTransforms_[kLegR].Initialize();
-	worldTransforms_[kLegR].translation_ = {-4.5f, -4.5f, 0};
+	worldTransforms_[kLegR].translation_ = {-3.0f, -4.5f, 0};
 	worldTransforms_[kLegR].parent_ = &worldTransforms_[kHip];
+
+	worldTransforms_[kFootR].Initialize();
+	worldTransforms_[kFootR].translation_ = {0, -4.5f, 0};
+	worldTransforms_[kFootR].parent_ = &worldTransforms_[kLegR];
 
 	worldTransforms_[kRoot].rotation_.y = PI / 180 * 30.0f;
 
@@ -90,7 +94,12 @@ void GameScene::Initialize() {
 void GameScene::Update() { 
 
 	MoveChara();
-	Walk();
+	
+	if (input_->PushKey(DIK_W)) {
+		Walk();
+	} else {
+		ReturnIdle();
+	}
 
 	UpdateMatrix();
 	viewProjection_.UpdateMatrix();
@@ -128,8 +137,6 @@ void GameScene::Draw() {
 
 		model_->Draw(worldTransforms_[i], viewProjection_, textureHandle_);
 	}
-
-	//PrimitiveDrawer::GetInstance()->DrawLine3d({0.0f, 0.0f, 0.0f}, {100.0f, 100.0f, 100.0f}, {2.0f, 0.0f, 0.0f, 0.0f});
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -201,6 +208,7 @@ void GameScene::Walk() {
 	PartWalk(kLegL, false);
 	PartWalk(kLegR, true);
 }
+
 void GameScene::PartWalk(const int part, bool b) {
 	float angle = PI / 180 * 3.0f;
 
@@ -234,6 +242,31 @@ void GameScene::PartWalk(const int part, bool b) {
 		}
 	}
 }
+
+void GameScene::ReturnIdle() {
+	PartIdle(kArmL);
+	PartIdle(kArmR);
+	PartIdle(kLegL);
+	PartIdle(kLegR);
+}
+
+void GameScene::PartIdle(const int part) {
+	float angle = PI / 180 * 3.0f;
+
+	if ((worldTransforms_[part].rotation_.x > 0)) {
+		worldTransforms_[part].rotation_.x -= angle;
+		if (worldTransforms_[part].rotation_.x <= 0) {
+			worldTransforms_[part].rotation_.x = 0;
+		}
+	}
+	if ((worldTransforms_[part].rotation_.x < 0)) {
+		worldTransforms_[part].rotation_.x += angle;
+		if (worldTransforms_[part].rotation_.x >= 0) {
+			worldTransforms_[part].rotation_.x = 0;
+		}
+	}
+}
+
 
 void GameScene::UpdateMatrix() {
 	for (int i = 0; i < kNumPartId; i++) {

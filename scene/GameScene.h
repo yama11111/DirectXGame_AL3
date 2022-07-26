@@ -66,6 +66,8 @@ class GameScene {
 	void MoveChara();
 	void Walk();
 	void PartWalk(const int part, bool b);
+	void ReturnIdle();
+	void PartIdle(const int part);
 	void UpdateMatrix();
 
 	void VPDebugText();
@@ -79,10 +81,14 @@ public:
 		kChest,
 		kHead,
 		kArmL,
+		kHandL,
 		kArmR,
+		kHandR,
 		kHip,
 		kLegL,
+		kFootL,
 		kLegR,
+		kFootR,
 
 		kNumPartId
 	};
