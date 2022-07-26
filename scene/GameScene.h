@@ -57,6 +57,7 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 	Player* player = nullptr;
+	
 
 	ViewProjection vp;
 	ViewProjection viewProjection_;
