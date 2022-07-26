@@ -60,6 +60,7 @@ class GameScene {
 	ViewProjection viewProjection_;
 
 	bool a = false;
+	float jump = 0.0f;
 
 	void Affine(WorldTransform& wt);
 

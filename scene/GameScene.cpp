@@ -200,6 +200,19 @@ void GameScene::MoveChara() {
 	}
 
 	worldTransforms_[kRoot].rotation_.y -= angle2;
+
+	const float kSpeed3 = 1.0f;
+	const float kSpeed4 = 0.1f;
+	if (input_->TriggerKey(DIK_SPACE)) {
+		jump = kSpeed3;
+	}
+	worldTransforms_[kRoot].translation_.y += jump;
+	if (worldTransforms_[kRoot].translation_.y > 0) {
+		jump -= kSpeed4;
+	} else {
+		worldTransforms_[kRoot].translation_.y = 0;
+		jump = 0;
+	}
 }
 
 void GameScene::Walk() {
@@ -210,7 +223,13 @@ void GameScene::Walk() {
 }
 
 void GameScene::PartWalk(const int part, bool b) {
-	float angle = PI / 180 * 3.0f;
+
+	float angle = 0.0f;
+	if (input_->PushKey(DIK_LSHIFT)) {
+		angle = PI / 180 * 6.0f;
+	} else {
+		angle = PI / 180 * 3.0f;
+	}
 
 	if (b) {
 		if (a) {
@@ -266,7 +285,6 @@ void GameScene::PartIdle(const int part) {
 		}
 	}
 }
-
 
 void GameScene::UpdateMatrix() {
 	for (int i = 0; i < kNumPartId; i++) {
