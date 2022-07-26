@@ -124,3 +124,13 @@ Matrix4 Moving(const Matrix4& mat, const Vector3& move) {
 
 	return MultMatrix4(mat, matMove);
 }
+
+void Affine(WorldTransform& wt) {
+	wt.matWorld_ = {
+	  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+	};
+	wt.matWorld_ = Scaling(wt.matWorld_, wt.scale_);
+	wt.matWorld_ = Rotation(wt.matWorld_, wt.rotation_);
+	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
+	wt.TransferMatrix();
+}

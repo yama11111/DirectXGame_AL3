@@ -11,6 +11,8 @@
 #include "WorldTransform.h"
 #include "DebugCamera.h"
 
+#include "Player.h"
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -52,41 +54,11 @@ class GameScene {
 	/// ゲームシーン用
 	/// </summary>
 	DebugCamera* debugCamera_ = nullptr;
-
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
+	Player* player = nullptr;
 
-	WorldTransform worldTransforms_[100];
+	ViewProjection vp;
 	ViewProjection viewProjection_;
-	float angle = 0;
-
-	void Affine(WorldTransform& wt);
-
-	void MoveChara();
-
-	void UpdateEye();
-	void UpdateTarget();
-	void UpdateUp();
-
-	void UpdateFovY();
-	void UpdateNearZ();
-
-	void CharaDebugText();
-	void VPDebugText();
-	void PPDebugText();
-
-public:
-	enum PartId {
-		kRoot,
-		kSpine,
-		kChest,
-		kHead,
-		kArmL,
-		kArmR,
-		kHip,
-		kLegL,
-		kLegR,
-
-		kNumPartId
-	};
+	bool isDebug = false;
 };

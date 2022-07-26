@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3.h"
 #include "Matrix4.h"
+#include "WorldTransform.h"
 #define PI 3.141592f
 
 Vector3 AddVector3(const Vector3& vec1, const Vector3& vec2);   // ‘«‚µŽZ
@@ -23,3 +24,5 @@ Matrix4 RotationY(const Matrix4& mat, const float rota);
 Matrix4 RotationZ(const Matrix4& mat, const float rota);
 Matrix4 Rotation(const Matrix4& mat, const Vector3& rota);
 Matrix4 Moving(const Matrix4& mat, const Vector3& move);
+
+void Affine(WorldTransform& wt);
