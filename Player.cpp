@@ -14,13 +14,17 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() { 
+	bullets.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { 
+		return bullet->IsDead(); 
+	});
+
 	Move();
 	Rotate();
+	Affine(wt);
 	Attack();
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Update();
 	}
-	Affine(wt);
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
@@ -65,13 +69,25 @@ void Player::Move() {
 	
 }
 
-void Player::Rotate() {}
+void Player::Rotate() {
+	Vector3 rota = {0, 0, 0};
+	const float power = 0.05f;
+	if (input->PushKey(DIK_E)) rota.y += power;
+	if (input->PushKey(DIK_Q)) rota.y -= power;
+
+	wt.rotation_ += rota;
+}
 
 void Player::Attack() {
 	if (input->TriggerKey(DIK_SPACE)) {
+		const float SPEED = 1.0f;
+		Vector3 velocity(0, 0, SPEED);
+
+		velocity = MultVec3Mat4(velocity, wt.matWorld_);
+
 		std::unique_ptr<PlayerBullet> newBullet = 
 			std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model, wt.translation_);
+		newBullet->Initialize(model, wt.translation_, velocity);
 		bullets.push_back(std::move(newBullet));
 	}
 
