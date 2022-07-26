@@ -10,7 +10,6 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
-	delete player;
 	delete debugCamera_;
 }
 
@@ -27,7 +26,8 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection()); 
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 
-	textureHandle_ = TextureManager::Load("mario.jpg");
+	textureHandle_ = TextureManager::Load("player.png");
+	textureHandle2_ = TextureManager::Load("enemy.png");
 	model_ = Model::Create();
 
 	std::random_device seed_gen;
@@ -36,8 +36,15 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
-	player = new Player();
-	player->Initialize(model_, textureHandle_);
+	Player* newPlayer = new Player();
+	newPlayer->Initialize(model_, textureHandle_);
+	player.reset(newPlayer);
+
+	Enemy* newEnemy = new Enemy();
+	const float SPEED = 0.5f;
+	Vector3 velocity(0, 0, -SPEED);
+	newEnemy->Initialize(model_, textureHandle2_, velocity);
+	enemy.reset(newEnemy);
 
 	viewProjection_.Initialize();
 }
@@ -45,6 +52,7 @@ void GameScene::Initialize() {
 void GameScene::Update() { 
 
 	player->Update();
+	if (enemy) enemy->Update();
 
 	if (input_->TriggerKey(DIK_0)) {
 		isDebug = !isDebug;
@@ -86,6 +94,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	player->Draw(vp);
+	if(enemy) enemy->Draw(vp);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -100,6 +109,8 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player->DebugText({50, 50});
+	if (enemy) enemy->DebugText({50, 110});
+
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);

@@ -12,6 +12,7 @@
 #include "DebugCamera.h"
 
 #include "Player.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -55,9 +56,10 @@ class GameScene {
 	/// </summary>
 	DebugCamera* debugCamera_ = nullptr;
 	uint32_t textureHandle_ = 0;
+	uint32_t textureHandle2_ = 0;
 	Model* model_ = nullptr;
-	Player* player = nullptr;
-	
+	std::unique_ptr<Player> player;
+	std::unique_ptr<Enemy> enemy;
 
 	ViewProjection vp;
 	ViewProjection viewProjection_;
