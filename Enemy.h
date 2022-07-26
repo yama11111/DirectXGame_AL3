@@ -1,5 +1,6 @@
 #pragma once
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 #include "DebugText.h"
 #include <memory>
 #include <list>
@@ -14,7 +15,7 @@ class Enemy {
 	WorldTransform wt;
 	std::list<std::unique_ptr<EnemyBullet>> bullets;
 	Phase phase = Phase::Approach;
-
+	std::list<std::unique_ptr<TimedCall>> timedCalls;
 	Model* model = nullptr;
 	uint32_t textureHandle = 0;
 	DebugText* debugText = nullptr;
@@ -28,4 +29,5 @@ class Enemy {
 	void Leave();
 	static void (Enemy::*spUpdateTable[])();
 	void Fire();
+	void FireAndReset();
 };
