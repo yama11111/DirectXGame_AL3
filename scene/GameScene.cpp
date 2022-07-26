@@ -52,9 +52,11 @@ void GameScene::Update() {
 	player->Update();
 	if (enemy) enemy->Update();
 
+#ifdef DEBUG
 	if (input_->TriggerKey(DIK_0)) {
 		isDebug = !isDebug;
 	}
+#endif // DEBUG
 
 	if (isDebug) {
 		debugCamera_->Update();

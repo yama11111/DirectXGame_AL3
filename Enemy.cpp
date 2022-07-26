@@ -9,18 +9,11 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos)
 	debugText = DebugText::GetInstance();
 	wt.translation_ = pos;
 	wt.Initialize();
+
 }
 
-void Enemy::Update() { 
-	
-	switch (phase) {
-	case Phase::Approach:
-		ApproachUpdate();
-		break;
-	case Phase::Leave:
-		LeaveUpdate();
-		break;
-	}
+void Enemy::Update() {
+	(this->*spUpdateTable[static_cast<size_t>(phase)])();
 	Affine(wt);
 }
 
@@ -40,7 +33,7 @@ void Enemy::DebugText(const Vector2& leftTop) {
 	debugText->Printf("rotation : (%f, %f, %f)", wt.rotation_.x, wt.rotation_.y, wt.rotation_.z);
 }
 
-void Enemy::ApproachUpdate() {
+void Enemy::Approach() {
 	const float SPEED = -0.1f;
 	Vector3 velocity = {0, 0, SPEED};
 	wt.translation_ += velocity;
@@ -49,8 +42,13 @@ void Enemy::ApproachUpdate() {
 	}
 }
 
-void Enemy::LeaveUpdate() {
+void Enemy::Leave() {
 	const float SPEED = 1.0f;
 	Vector3 velocity = {0, 0, SPEED};
 	wt.translation_ += velocity;
 }
+
+void (Enemy::*Enemy::spUpdateTable[])() = {
+  &Enemy::Approach,
+  &Enemy::Leave,
+};

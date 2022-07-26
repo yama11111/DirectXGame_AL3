@@ -21,6 +21,7 @@ class Enemy {
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
   private:
-	void ApproachUpdate();
-	void LeaveUpdate();
+	void Approach();
+	void Leave();
+	static void (Enemy::*spUpdateTable[])();
 };
