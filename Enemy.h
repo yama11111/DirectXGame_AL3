@@ -1,7 +1,8 @@
 #pragma once
-#include "WorldTransform.h"
-#include "Model.h"
+#include "EnemyBullet.h"
 #include "DebugText.h"
+#include <memory>
+#include <list>
 
 class Enemy {
   public:
@@ -11,9 +12,11 @@ class Enemy {
 	};
   private:
 	WorldTransform wt;
+	std::list<std::unique_ptr<EnemyBullet>> bullets;
+	Phase phase = Phase::Approach;
+
 	Model* model = nullptr;
 	uint32_t textureHandle = 0;
-	Phase phase = Phase::Approach;
 	DebugText* debugText = nullptr;
   public:
 	void Initialize(Model* model, uint32_t textureHandle, const Vector3& pos);
@@ -24,4 +27,5 @@ class Enemy {
 	void Approach();
 	void Leave();
 	static void (Enemy::*spUpdateTable[])();
+	void Fire();
 };

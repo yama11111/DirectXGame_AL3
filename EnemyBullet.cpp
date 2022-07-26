@@ -1,18 +1,18 @@
-#include "PlayerBullet.h"
+#include "EnemyBullet.h"
 #include "MyCalc.h"
 
-void PlayerBullet::Initialize(Model* model, 
+void EnemyBullet::Initialize(Model* model, 
 	const Vector3& pos, const Vector3& velocity) {
-	
+
 	this->model = model;
-	textureHandle = TextureManager::Load("black.png");
+	textureHandle = TextureManager::Load("orange.png");
 	wt.Initialize();
 	wt.translation_ = pos;
 	Affine(wt);
 	this->velocity = velocity;
 }
 
-void PlayerBullet::Update() {
+void EnemyBullet::Update() {
 
 	if (--deathT <= 0) {
 		isDead = true;
@@ -21,7 +21,7 @@ void PlayerBullet::Update() {
 	Affine(wt);
 }
 
-void PlayerBullet::Draw(const ViewProjection& viewProjection) {
+void EnemyBullet::Draw(const ViewProjection& viewProjection) {
 
 	model->Draw(wt, viewProjection, textureHandle);
 }
