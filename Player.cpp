@@ -17,7 +17,7 @@ void Player::Update() {
 	Move();
 	Rotate();
 	Attack();
-	if (bullet) {
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Update();
 	}
 	Affine(wt);
@@ -26,7 +26,7 @@ void Player::Update() {
 void Player::Draw(const ViewProjection& viewProjection) {
 	
 	model->Draw(wt, viewProjection, textureHandle);
-	if (bullet) {
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Draw(viewProjection);
 	}
 }
@@ -69,9 +69,10 @@ void Player::Rotate() {}
 
 void Player::Attack() {
 	if (input->TriggerKey(DIK_SPACE)) {
-		PlayerBullet* newBullet = new PlayerBullet();
+		std::unique_ptr<PlayerBullet> newBullet = 
+			std::make_unique<PlayerBullet>();
 		newBullet->Initialize(model, wt.translation_);
-		bullet = newBullet;
+		bullets.push_back(std::move(newBullet));
 	}
 
 }

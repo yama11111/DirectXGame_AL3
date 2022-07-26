@@ -2,11 +2,13 @@
 #include "PlayerBullet.h"
 #include "Input.h"
 #include "DebugText.h"
+#include <memory>
+#include <list>
 
 class Player {
   private:
 	WorldTransform wt;
-	PlayerBullet* bullet = nullptr;
+	std::list<std::unique_ptr<PlayerBullet>> bullets;
 
 	Model* model = nullptr;
 	uint32_t textureHandle = 0;
