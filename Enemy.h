@@ -4,18 +4,23 @@
 #include "DebugText.h"
 
 class Enemy {
+  public:
+	enum class Phase {
+		Approach, // ê⁄ãﬂÇ∑ÇÈ
+		Leave,    // ó£íEÇ∑ÇÈ
+	};
   private:
 	WorldTransform wt;
 	Model* model = nullptr;
 	uint32_t textureHandle = 0;
-	Vector3 velocity;
+	Phase phase = Phase::Approach;
 	DebugText* debugText = nullptr;
   public:
-	void Initialize(Model* model, uint32_t textureHandle, 
-		const Vector3& velocity);
+	void Initialize(Model* model, uint32_t textureHandle, const Vector3& pos);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
   private:
-	void Move();
+	void ApproachUpdate();
+	void LeaveUpdate();
 };

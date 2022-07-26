@@ -2,25 +2,30 @@
 #include "MyCalc.h"
 #include <cassert>
 
-void Enemy::Initialize(Model* model, uint32_t textureHandle, 
-	const Vector3& velocity) {
+void Enemy::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos) {
 	assert(model);
 	this->model = model;
 	this->textureHandle = textureHandle;
 	debugText = DebugText::GetInstance();
-	this->velocity = velocity;
+	wt.translation_ = pos;
 	wt.Initialize();
 }
 
 void Enemy::Update() { 
 	
-	Move();
+	switch (phase) {
+	case Phase::Approach:
+		ApproachUpdate();
+		break;
+	case Phase::Leave:
+		LeaveUpdate();
+		break;
+	}
 	Affine(wt);
-
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	
+
 	model->Draw(wt, viewProjection, textureHandle);
 
 }
@@ -35,6 +40,17 @@ void Enemy::DebugText(const Vector2& leftTop) {
 	debugText->Printf("rotation : (%f, %f, %f)", wt.rotation_.x, wt.rotation_.y, wt.rotation_.z);
 }
 
-void Enemy::Move() { 
+void Enemy::ApproachUpdate() {
+	const float SPEED = -0.1f;
+	Vector3 velocity = {0, 0, SPEED};
+	wt.translation_ += velocity;
+	if (wt.translation_.z < -2.0f) {
+		phase = Phase::Leave;
+	}
+}
+
+void Enemy::LeaveUpdate() {
+	const float SPEED = 1.0f;
+	Vector3 velocity = {0, 0, SPEED};
 	wt.translation_ += velocity;
 }

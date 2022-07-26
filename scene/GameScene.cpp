@@ -41,9 +41,7 @@ void GameScene::Initialize() {
 	player.reset(newPlayer);
 
 	Enemy* newEnemy = new Enemy();
-	const float SPEED = 0.5f;
-	Vector3 velocity(0, 0, -SPEED);
-	newEnemy->Initialize(model_, textureHandle2_, velocity);
+	newEnemy->Initialize(model_, textureHandle2_, {0, 10, 20});
 	enemy.reset(newEnemy);
 
 	viewProjection_.Initialize();
