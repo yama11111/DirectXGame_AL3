@@ -12,6 +12,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos)
 	wt.Initialize();
 	FireAndReset();
 	SetRad(1.0f);
+	SetAttribute(COLL_ATTRIBUTE_ENEMY);
+	SetMask(~COLL_ATTRIBUTE_ENEMY);
 }
 
 void Enemy::Update() {

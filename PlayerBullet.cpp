@@ -11,6 +11,8 @@ void PlayerBullet::Initialize(Model* model,
 	Affine(wt);
 	this->velocity = velocity;
 	SetRad(1.0f);
+	SetAttribute(COLL_ATTRIBUTE_PLAYER);
+	SetMask(~COLL_ATTRIBUTE_PLAYER);
 }
 
 void PlayerBullet::Update() {

@@ -14,6 +14,8 @@ void EnemyBullet::Initialize(Model* model,
 	AdjustAngle();
 	Affine(wt);
 	SetRad(0.5f);
+	SetAttribute(COLL_ATTRIBUTE_ENEMY);
+	SetMask(~COLL_ATTRIBUTE_ENEMY);
 }
 
 void EnemyBullet::Update() {

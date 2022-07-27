@@ -11,6 +11,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	debugText = DebugText::GetInstance();
 	wt.Initialize();
 	SetRad(0.5f);
+	SetAttribute(COLL_ATTRIBUTE_PLAYER);
+	SetMask(~COLL_ATTRIBUTE_PLAYER);
 }
 
 void Player::Update() { 
