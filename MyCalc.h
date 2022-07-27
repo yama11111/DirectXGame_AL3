@@ -6,12 +6,15 @@
 
 Vector3 AddVector3(const Vector3& vec1, const Vector3& vec2);   // ‘«‚µZ
 Vector3 SubVector3(const Vector3& vec1, const Vector3& vec2);   // ˆø‚«Z
-Vector3 MultVector3(const Vector3& vec, const int scalar);      // Š|‚¯Z
-Vector3 DivVector3(const Vector3& vec, const int scalar);       // Š„‚èZ
+Vector3 MultVector3(const Vector3& vec, const float scalar);      // Š|‚¯Z
+Vector3 DivVector3(const Vector3& vec, const float scalar);       // Š„‚èZ
 float DotVector3(const Vector3& vec1, const Vector3& vec2);       // “àÏ
 Vector3 CrossVector3(const Vector3& vec1, const Vector3& vec2); // ŠOÏ
 float SizeVector3(const Vector3& vec);                            // ‘å‚«‚³
 Vector3 NormalizeVector3(const Vector3& vec);                   // ³‹K‰»
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 // Matrix4 NomalizeMatrix(const Matrix4& mat); // ³‹K‰»
 Matrix4 TransposeMatrix4(const Matrix4& mat); // “]’u

@@ -1,5 +1,6 @@
 #include "EnemyBullet.h"
 #include "MyCalc.h"
+#include "Player.h"
 
 void EnemyBullet::Initialize(Model* model, 
 	const Vector3& pos, const Vector3& velocity) {
@@ -19,6 +20,7 @@ void EnemyBullet::Update() {
 	if (--deathT <= 0) {
 		isDead = true;
 	}
+	Homing();
 	wt.translation_ += velocity;
 	Affine(wt);
 }
@@ -32,4 +34,15 @@ void EnemyBullet::AdjustAngle() {
 	wt.rotation_.y = std::atan2(velocity.x, velocity.z);
 	float xz = SizeVector3({velocity.x, 0.0f, velocity.z});
 	wt.rotation_.x = std::atan2(-velocity.y, xz);
+}
+
+void EnemyBullet::Homing() { 
+	Vector3 fromVel = velocity;
+	fromVel = NormalizeVector3(fromVel);
+
+	Vector3 toPlayer = SubVector3(player->GetWorldPos(), wt.translation_);
+	toPlayer = NormalizeVector3(toPlayer);
+
+	velocity = MultVector3(Slerp(fromVel, toPlayer, 0.02f), 0.5f);
+	AdjustAngle();
 }

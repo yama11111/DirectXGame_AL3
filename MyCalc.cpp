@@ -1,5 +1,6 @@
 #include "MyCalc.h"
 #include <math.h>
+#include <cmath>
 
 Vector3 AddVector3(const Vector3& vec1, const Vector3& vec2) {
 	return {vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z};
@@ -7,10 +8,10 @@ Vector3 AddVector3(const Vector3& vec1, const Vector3& vec2) {
 Vector3 SubVector3(const Vector3& vec1, const Vector3& vec2) {
 	return {vec1.x - vec2.x, vec1.y - vec2.y, vec1.z - vec2.z};
 }
-Vector3 MultVector3(const Vector3& vec, const int scalar) {
+Vector3 MultVector3(const Vector3& vec, const float scalar) {
 	return {vec.x * scalar, vec.y * scalar, vec.z * scalar};
 }
-Vector3 DivVector3(const Vector3& vec, const int scalar) {
+Vector3 DivVector3(const Vector3& vec, const float scalar) {
 	return {vec.x / scalar, vec.y / scalar, vec.z / scalar};
 }
 
@@ -28,7 +29,35 @@ float SizeVector3(const Vector3& vec) {
 	return sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); 
 }
 
-Vector3 NormalizeVector3(const Vector3& vec) { return DivVector3(vec, SizeVector3(vec)); }
+Vector3 NormalizeVector3(const Vector3& vec) { 
+	return DivVector3(vec, SizeVector3(vec)); 
+}
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) { 
+	Vector3 v = SubVector3(v2, v1);
+	return AddVector3(v1, MultVector3(v, t));
+}
+
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) {
+
+	float dot = DotVector3(v1, v2);
+	if (dot >= 1.0 || dot <= -1.0) return v1;
+
+	float theta = acosf(dot);
+	float sTheta = sinf(theta);
+	float sf = sinf((1 - t) * theta);
+	float st = sinf(t * theta);
+
+	float aS = SizeVector3(v1);
+	float bS = SizeVector3(v2);
+	float s = aS + t * (bS - aS);
+
+	Vector3 from = MultVector3(v1, sf);
+	Vector3 to = MultVector3(v2, st);
+	Vector3 e = DivVector3(AddVector3(from, to), sTheta);
+
+	return MultVector3(e, s);
+}
 
 
 // Matrix4 NomalizeMatrix(const Matrix4& max) {
