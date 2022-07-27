@@ -19,6 +19,7 @@ class Player {
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
+	Vector3 GetWorldPos();
   private:
 	void Move();
 	void Rotate();

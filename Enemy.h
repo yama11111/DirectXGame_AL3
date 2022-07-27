@@ -5,6 +5,8 @@
 #include <memory>
 #include <list>
 
+class Player;
+
 class Enemy {
   public:
 	enum class Phase {
@@ -14,6 +16,7 @@ class Enemy {
   private:
 	WorldTransform wt;
 	std::list<std::unique_ptr<EnemyBullet>> bullets;
+	Player* player = nullptr;
 	Phase phase = Phase::Approach;
 	std::list<std::unique_ptr<TimedCall>> timedCalls;
 	Model* model = nullptr;
@@ -24,6 +27,8 @@ class Enemy {
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
+	void SetPlayer(Player* player) { this->player = player; }
+	Vector3 GetWorldPos();
   private:
 	void Approach();
 	void Leave();

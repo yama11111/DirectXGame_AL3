@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 #include "MyCalc.h"
 #include <cassert>
 
@@ -53,6 +54,11 @@ void Enemy::DebugText(const Vector2& leftTop) {
 	debugText->Printf("rotation : (%f, %f, %f)", wt.rotation_.x, wt.rotation_.y, wt.rotation_.z);
 }
 
+Vector3 Enemy::GetWorldPos() {
+	Vector3 pos = wt.translation_;
+	return pos;
+}
+
 void Enemy::Approach() {
 	const float SPEED = -0.1f;
 	Vector3 velocity = {0, 0, SPEED};
@@ -70,10 +76,14 @@ void Enemy::Leave() {
 }
 
 void Enemy::Fire() {
-	const float SPEED = -1.0f;
-	Vector3 velocity(0, 0, SPEED);
+	assert(player);
 
-	velocity = MultVec3Mat4(velocity, wt.matWorld_);
+	const float SPEED = -0.5f;
+
+	Vector3 velocity = GetWorldPos();
+	velocity -= player->GetWorldPos();
+	velocity = NormalizeVector3(velocity);
+	velocity *= SPEED;
 
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 	newBullet->Initialize(model, wt.translation_, velocity);

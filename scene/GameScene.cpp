@@ -41,6 +41,7 @@ void GameScene::Initialize() {
 	player.reset(newPlayer);
 
 	Enemy* newEnemy = new Enemy();
+	newEnemy->SetPlayer(player.get());
 	newEnemy->Initialize(model_, textureHandle2_, {0, 10, 20});
 	enemy.reset(newEnemy);
 

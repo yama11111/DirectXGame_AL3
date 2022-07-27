@@ -78,6 +78,11 @@ void Player::Rotate() {
 	wt.rotation_ += rota;
 }
 
+Vector3 Player::GetWorldPos() { 
+	Vector3 pos = wt.translation_;
+	return pos; 
+}
+
 void Player::Attack() {
 	if (input->TriggerKey(DIK_SPACE)) {
 		const float SPEED = 1.0f;
