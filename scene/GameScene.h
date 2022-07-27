@@ -13,6 +13,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -60,11 +61,9 @@ class GameScene {
 	Model* model_ = nullptr;
 	std::unique_ptr<Player> player;
 	std::unique_ptr<Enemy> enemy;
+	std::unique_ptr<CollisionManager> collManager;
 
 	ViewProjection vp;
 	ViewProjection viewProjection_;
 	bool isDebug = false;
-private:
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
-	void CheckAllCollisions();
 };

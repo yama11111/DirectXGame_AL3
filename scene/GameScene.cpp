@@ -45,6 +45,10 @@ void GameScene::Initialize() {
 	newEnemy->Initialize(model_, textureHandle2_, {0, -10, 20});
 	enemy.reset(newEnemy);
 
+	CollisionManager* newCollManager = new CollisionManager();
+	newCollManager->Initialize();
+	collManager.reset(newCollManager);
+
 	viewProjection_.Initialize();
 }
 
@@ -53,7 +57,20 @@ void GameScene::Update() {
 	player->Update();
 	if (enemy) enemy->Update();
 
-	CheckAllCollisions();
+	collManager->Clear();
+
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player->GetBullets();
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+	collManager->PushBack(player.get());
+	collManager->PushBack(enemy.get());
+	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+		collManager->PushBack(bullet.get());
+	}
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		collManager->PushBack(bullet.get());
+	}
+
+	collManager->Update();
 
 #ifdef DEBUG
 	if (input_->TriggerKey(DIK_0)) {
@@ -122,47 +139,4 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
-}
-
-void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	if ((colliderA->GetAttribute() & colliderB->GetMask()) == 0 ||
-		(colliderB->GetAttribute() & colliderA->GetMask()) == 0) {
-		return;
-	}
-	Vector3 posA = colliderA->GetWorldPos();
-	Vector3 posB = colliderB->GetWorldPos();
-	Vector3 dist = SubVector3(posB, posA);
-	if (SizeVector3(dist) <= colliderA->GetRad() + colliderB->GetRad()) {
-		colliderA->OnCollision();
-		colliderB->OnCollision();
-	}
-}
-
-void GameScene::CheckAllCollisions() {
-	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player->GetBullets();
-	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
-
-	std::list<Collider*> colliders;
-	colliders.push_back(player.get());
-	colliders.push_back(enemy.get());
-	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-		colliders.push_back(bullet.get());
-	}
-	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-		colliders.push_back(bullet.get());
-	}
-
-	std::list<Collider*>::iterator itrA = colliders.begin();
-	for (; itrA != colliders.end(); ++itrA) {
-		Collider* colA = *itrA;
-
-		std::list<Collider*>::iterator itrB = itrA;
-		itrB++;
-
-		for (; itrB != colliders.end(); ++itrB) {
-			Collider* colB = *itrB;
-
-			CheckCollisionPair(colA, colB);
-		}
-	}
 }
