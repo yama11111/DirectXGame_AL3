@@ -1,11 +1,12 @@
 #pragma once
 #include "PlayerBullet.h"
+#include "Collider.h"
 #include "Input.h"
 #include "DebugText.h"
 #include <memory>
 #include <list>
 
-class Player {
+class Player : public Collider{
   private:
 	WorldTransform wt;
 	std::list<std::unique_ptr<PlayerBullet>> bullets;
@@ -19,8 +20,8 @@ class Player {
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
-	Vector3 GetWorldPos();
-	void OnCollision();
+	Vector3 GetWorldPos() override;
+	void OnCollision() override;
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets; }
   private:
 	void Move();

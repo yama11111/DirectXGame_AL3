@@ -13,6 +13,7 @@ void EnemyBullet::Initialize(Model* model,
 	wt.scale_ = {0.5f, 0.5f, 0.5f};
 	AdjustAngle();
 	Affine(wt);
+	SetRad(0.5f);
 }
 
 void EnemyBullet::Update() {

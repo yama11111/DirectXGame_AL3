@@ -124,45 +124,36 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	Vector3 posA = colliderA->GetWorldPos();
+	Vector3 posB = colliderB->GetWorldPos();
+	Vector3 dist = SubVector3(posB, posA);
+	if (SizeVector3(dist) <= colliderA->GetRad() + colliderB->GetRad()) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
+}
+
 void GameScene::CheckAllCollisions() {
-	Vector3 posA, posB;
 	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player->GetBullets();
 	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
 
 #pragma region 自キャラと敵弾のアタリ判定
-	posA = player->GetWorldPos();
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-		posB = bullet->GetWorldPos();
-		Vector3 dist = SubVector3(posB, posA);
-		if (SizeVector3(dist) <= 1.5f) {
-			player->OnCollision();
-			bullet->OnCollision();
-		}
+		CheckCollisionPair(player.get(), bullet.get());
 	}
 #pragma endregion 
 
 #pragma region 自弾と敵キャラのアタリ判定
-	posA = enemy->GetWorldPos();
 	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-		posB = bullet->GetWorldPos();
-		Vector3 dist = SubVector3(posB, posA);
-		if (SizeVector3(dist) <= 2.5f) {
-			enemy->OnCollision();
-			bullet->OnCollision();
-		}
+		CheckCollisionPair(enemy.get(), bullet.get());
 	}
 #pragma endregion
 
 #pragma region 自弾と敵弾のアタリ判定
 	for (const std::unique_ptr<EnemyBullet>& pBullet : enemyBullets) {
 		for (const std::unique_ptr<PlayerBullet>& eBullet : playerBullets) {
-			posA = pBullet->GetWorldPos();
-			posB = eBullet->GetWorldPos();
-			Vector3 dist = SubVector3(posB, posA);
-			if (SizeVector3(dist) <= 1.5f) {
-				pBullet->OnCollision();
-				eBullet->OnCollision();
-			}
+			CheckCollisionPair(pBullet.get(), eBullet.get());
 		}
 	}
 #pragma endregion

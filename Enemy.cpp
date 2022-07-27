@@ -11,6 +11,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos)
 	wt.translation_ = pos;
 	wt.Initialize();
 	FireAndReset();
+	SetRad(1.0f);
 }
 
 void Enemy::Update() {

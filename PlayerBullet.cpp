@@ -10,6 +10,7 @@ void PlayerBullet::Initialize(Model* model,
 	wt.translation_ = pos;
 	Affine(wt);
 	this->velocity = velocity;
+	SetRad(1.0f);
 }
 
 void PlayerBullet::Update() {

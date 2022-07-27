@@ -1,10 +1,11 @@
 #pragma once
 #include "WorldTransform.h"
+#include "Collider.h"
 #include "Model.h"
 
 class Player;
 
-class EnemyBullet {
+class EnemyBullet : public Collider {
   private:
 	WorldTransform wt;
 	Model* model = nullptr;
@@ -20,8 +21,8 @@ class EnemyBullet {
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDead() const { return isDead; }
 	void SetPlayer(Player* player) { this->player = player; }
-	void OnCollision();
-	Vector3 GetWorldPos();
+	void OnCollision() override;
+	Vector3 GetWorldPos() override;
   private:
 	void AdjustAngle();
 	void Homing();

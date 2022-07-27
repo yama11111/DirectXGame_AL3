@@ -1,13 +1,14 @@
 #pragma once
 #include "EnemyBullet.h"
 #include "TimedCall.h"
+#include "Collider.h"
 #include "DebugText.h"
 #include <memory>
 #include <list>
 
 class Player;
 
-class Enemy {
+class Enemy : public Collider {
   public:
 	enum class Phase {
 		Approach, // Ú‹ß‚·‚é
@@ -28,8 +29,8 @@ class Enemy {
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
 	void SetPlayer(Player* player) { this->player = player; }
-	Vector3 GetWorldPos();
-	void OnCollision();
+	Vector3 GetWorldPos() override;
+	void OnCollision() override;
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets; }
   private:
 	void Approach();

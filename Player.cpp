@@ -10,7 +10,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input = Input::GetInstance();
 	debugText = DebugText::GetInstance();
 	wt.Initialize();
-
+	SetRad(0.5f);
 }
 
 void Player::Update() { 

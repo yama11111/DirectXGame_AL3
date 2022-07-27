@@ -1,8 +1,9 @@
 #pragma once
 #include "WorldTransform.h"
+#include "Collider.h"
 #include "Model.h"
 
-class PlayerBullet {
+class PlayerBullet : public Collider {
   private:
 	WorldTransform wt;
 	Model* model = nullptr;
@@ -17,6 +18,6 @@ class PlayerBullet {
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDead() const { return isDead; }
-	void OnCollision();
-	Vector3 GetWorldPos();
+	void OnCollision() override;
+	Vector3 GetWorldPos() override;
 };

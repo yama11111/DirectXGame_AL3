@@ -65,5 +65,6 @@ class GameScene {
 	ViewProjection viewProjection_;
 	bool isDebug = false;
 private:
+	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 	void CheckAllCollisions();
 };
