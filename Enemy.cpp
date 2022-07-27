@@ -60,14 +60,16 @@ Vector3 Enemy::GetWorldPos() {
 }
 
 void Enemy::Approach() {
-	const float SPEED = -0.1f;
+	const float SPEED = -0.05f;
 	Vector3 velocity = {0, 0, SPEED};
 	wt.translation_ += velocity;
-	if (wt.translation_.z < -2.0f) {
+	if (wt.translation_.z < 1.0f) {
 		phase = Phase::Leave;
 		timedCalls.clear();
 	}
 }
+
+void Enemy::OnCollision() {}
 
 void Enemy::Leave() {
 	const float SPEED = 1.0f;

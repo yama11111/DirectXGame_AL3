@@ -42,7 +42,7 @@ void GameScene::Initialize() {
 
 	Enemy* newEnemy = new Enemy();
 	newEnemy->SetPlayer(player.get());
-	newEnemy->Initialize(model_, textureHandle2_, {0, 10, 20});
+	newEnemy->Initialize(model_, textureHandle2_, {0, -10, 20});
 	enemy.reset(newEnemy);
 
 	viewProjection_.Initialize();
@@ -52,6 +52,8 @@ void GameScene::Update() {
 
 	player->Update();
 	if (enemy) enemy->Update();
+
+	CheckAllCollisions();
 
 #ifdef DEBUG
 	if (input_->TriggerKey(DIK_0)) {
@@ -119,5 +121,49 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
+#pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	Vector3 posA, posB;
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player->GetBullets();
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+
+#pragma region 自キャラと敵弾のアタリ判定
+	posA = player->GetWorldPos();
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		posB = bullet->GetWorldPos();
+		Vector3 dist = SubVector3(posB, posA);
+		if (SizeVector3(dist) <= 1.5f) {
+			player->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+#pragma endregion 
+
+#pragma region 自弾と敵キャラのアタリ判定
+	posA = enemy->GetWorldPos();
+	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+		posB = bullet->GetWorldPos();
+		Vector3 dist = SubVector3(posB, posA);
+		if (SizeVector3(dist) <= 2.5f) {
+			enemy->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵弾のアタリ判定
+	for (const std::unique_ptr<EnemyBullet>& pBullet : enemyBullets) {
+		for (const std::unique_ptr<PlayerBullet>& eBullet : playerBullets) {
+			posA = pBullet->GetWorldPos();
+			posB = eBullet->GetWorldPos();
+			Vector3 dist = SubVector3(posB, posA);
+			if (SizeVector3(dist) <= 1.5f) {
+				pBullet->OnCollision();
+				eBullet->OnCollision();
+			}
+		}
+	}
 #pragma endregion
 }

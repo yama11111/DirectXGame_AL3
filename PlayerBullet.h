@@ -17,4 +17,6 @@ class PlayerBullet {
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDead() const { return isDead; }
+	void OnCollision();
+	Vector3 GetWorldPos();
 };

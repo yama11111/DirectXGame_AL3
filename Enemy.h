@@ -29,6 +29,8 @@ class Enemy {
 	void DebugText(const Vector2& leftTop);
 	void SetPlayer(Player* player) { this->player = player; }
 	Vector3 GetWorldPos();
+	void OnCollision();
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets; }
   private:
 	void Approach();
 	void Leave();

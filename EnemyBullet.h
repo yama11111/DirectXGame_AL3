@@ -20,6 +20,8 @@ class EnemyBullet {
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDead() const { return isDead; }
 	void SetPlayer(Player* player) { this->player = player; }
+	void OnCollision();
+	Vector3 GetWorldPos();
   private:
 	void AdjustAngle();
 	void Homing();

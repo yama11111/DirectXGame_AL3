@@ -97,3 +97,5 @@ void Player::Attack() {
 	}
 
 }
+
+void Player::OnCollision() {}

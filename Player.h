@@ -20,6 +20,8 @@ class Player {
 	void Draw(const ViewProjection& viewProjection);
 	void DebugText(const Vector2& leftTop);
 	Vector3 GetWorldPos();
+	void OnCollision();
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets; }
   private:
 	void Move();
 	void Rotate();

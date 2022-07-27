@@ -64,4 +64,6 @@ class GameScene {
 	ViewProjection vp;
 	ViewProjection viewProjection_;
 	bool isDebug = false;
+private:
+	void CheckAllCollisions();
 };

@@ -10,7 +10,7 @@ void EnemyBullet::Initialize(Model* model,
 	textureHandle = TextureManager::Load("orange.png");
 	wt.Initialize();
 	wt.translation_ = pos;
-	wt.scale_ = {0.5f, 0.5f, 3.0f};
+	wt.scale_ = {0.5f, 0.5f, 0.5f};
 	AdjustAngle();
 	Affine(wt);
 }
@@ -28,6 +28,13 @@ void EnemyBullet::Update() {
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {
 
 	model->Draw(wt, viewProjection, textureHandle);
+}
+
+void EnemyBullet::OnCollision() { isDead = true; }
+
+Vector3 EnemyBullet::GetWorldPos() {
+	Vector3 pos = wt.translation_;
+	return pos;
 }
 
 void EnemyBullet::AdjustAngle() {
