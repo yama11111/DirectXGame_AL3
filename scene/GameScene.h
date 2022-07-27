@@ -13,6 +13,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Skydome.h"
 #include "CollisionManager.h"
 
 /// <summary>
@@ -59,8 +60,10 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	uint32_t textureHandle2_ = 0;
 	Model* model_ = nullptr;
+	Model* modelSkydome = nullptr;
 	std::unique_ptr<Player> player;
 	std::unique_ptr<Enemy> enemy;
+	std::unique_ptr<Skydome> skydome;
 	std::unique_ptr<CollisionManager> collManager;
 
 	ViewProjection vp;

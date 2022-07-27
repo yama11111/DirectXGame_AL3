@@ -10,6 +10,7 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
+	delete modelSkydome;
 	delete debugCamera_;
 }
 
@@ -29,6 +30,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("player.png");
 	textureHandle2_ = TextureManager::Load("enemy.png");
 	model_ = Model::Create();
+	modelSkydome = Model::CreateFromOBJ("skydome", true);
 
 	std::random_device seed_gen;
 	std::mt19937_64 engine(seed_gen());
@@ -45,6 +47,10 @@ void GameScene::Initialize() {
 	newEnemy->Initialize(model_, textureHandle2_, {0, -10, 20});
 	enemy.reset(newEnemy);
 
+	Skydome* newSkydome = new Skydome();
+	newSkydome->Initialize(modelSkydome);
+	skydome.reset(newSkydome);
+
 	CollisionManager* newCollManager = new CollisionManager();
 	newCollManager->Initialize();
 	collManager.reset(newCollManager);
@@ -56,6 +62,7 @@ void GameScene::Update() {
 
 	player->Update();
 	if (enemy) enemy->Update();
+	skydome->Update();
 
 	collManager->Clear();
 
@@ -72,11 +79,11 @@ void GameScene::Update() {
 
 	collManager->Update();
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_0)) {
 		isDebug = !isDebug;
 	}
-#endif // DEBUG
+#endif // _DEBUG
 
 	if (isDebug) {
 		debugCamera_->Update();
@@ -113,6 +120,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	skydome->Draw(vp);
 	player->Draw(vp);
 	if(enemy) enemy->Draw(vp);
 
