@@ -14,7 +14,7 @@ Vector3 DivVector3(const Vector3& vec, const int scalar) {
 	return {vec.x / scalar, vec.y / scalar, vec.z / scalar};
 }
 
-int DotVector3(const Vector3& vec1, const Vector3& vec2) {
+float DotVector3(const Vector3& vec1, const Vector3& vec2) {
 	return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 }
 
@@ -24,7 +24,9 @@ Vector3 CrossVector3(const Vector3& vec1, const Vector3& vec2) {
 	  vec1.x * vec2.y - vec1.y * vec2.x};
 }
 
-int SizeVector3(const Vector3& vec) { return sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); }
+float SizeVector3(const Vector3& vec) { 
+	return sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); 
+}
 
 Vector3 NormalizeVector3(const Vector3& vec) { return DivVector3(vec, SizeVector3(vec)); }
 

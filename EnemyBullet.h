@@ -15,4 +15,6 @@ class EnemyBullet {
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDead() const { return isDead; }
+  private:
+	void AdjustAngle();
 };
