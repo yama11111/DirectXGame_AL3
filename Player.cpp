@@ -10,6 +10,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input = Input::GetInstance();
 	debugText = DebugText::GetInstance();
 	wt.Initialize();
+	wt.translation_ = {0, 0, 50};
+	Affine(wt);
+	wt.TransferMatrix();
 	SetRad(0.5f);
 	SetAttribute(COLL_ATTRIBUTE_PLAYER);
 	SetMask(~COLL_ATTRIBUTE_PLAYER);
@@ -23,6 +26,8 @@ void Player::Update() {
 	Move();
 	Rotate();
 	Affine(wt);
+	wt.matWorld_ *= *camera;
+	wt.TransferMatrix();
 	Attack();
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Update();
@@ -92,9 +97,11 @@ void Player::Attack() {
 
 		velocity = MultVec3Mat4(velocity, wt.matWorld_);
 
+		Vector3 pos = MultVec3Mat4(wt.translation_, wt.matWorld_);
+
 		std::unique_ptr<PlayerBullet> newBullet = 
 			std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model, wt.translation_, velocity);
+		newBullet->Initialize(model, pos, velocity);
 		bullets.push_back(std::move(newBullet));
 	}
 

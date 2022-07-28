@@ -10,6 +10,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos)
 	debugText = DebugText::GetInstance();
 	wt.translation_ = pos;
 	wt.Initialize();
+	Affine(wt);
+	wt.TransferMatrix();
 	FireAndReset();
 	SetRad(1.0f);
 	SetAttribute(COLL_ATTRIBUTE_ENEMY);
@@ -31,6 +33,7 @@ void Enemy::Update() {
 
 	(this->*spUpdateTable[static_cast<size_t>(phase)])();
 	Affine(wt);
+	wt.TransferMatrix();
 
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
 		bullet->Update();

@@ -15,6 +15,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "CollisionManager.h"
+#include "RailCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -65,8 +66,8 @@ class GameScene {
 	std::unique_ptr<Enemy> enemy;
 	std::unique_ptr<Skydome> skydome;
 	std::unique_ptr<CollisionManager> collManager;
+	std::unique_ptr<RailCamera> rCamera;
 
 	ViewProjection vp;
-	ViewProjection viewProjection_;
 	bool isDebug = false;
 };

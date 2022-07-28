@@ -38,7 +38,12 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> dist(0, 2 * PI);
 	std::uniform_real_distribution<float> dist2(-10, 10);
 
+	RailCamera* newRCamera = new RailCamera();
+	newRCamera->Initialize({0, 0, -50});
+	rCamera.reset(newRCamera);
+
 	Player* newPlayer = new Player();
+	newPlayer->SetCamera(rCamera->GetMatWorld());
 	newPlayer->Initialize(model_, textureHandle_);
 	player.reset(newPlayer);
 
@@ -55,11 +60,11 @@ void GameScene::Initialize() {
 	newCollManager->Initialize();
 	collManager.reset(newCollManager);
 
-	viewProjection_.Initialize();
 }
 
 void GameScene::Update() { 
 
+	rCamera->Update();
 	player->Update();
 	if (enemy) enemy->Update();
 	skydome->Update();
@@ -79,6 +84,7 @@ void GameScene::Update() {
 
 	collManager->Update();
 
+
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_0)) {
 		isDebug = !isDebug;
@@ -89,8 +95,7 @@ void GameScene::Update() {
 		debugCamera_->Update();
 		vp = debugCamera_->GetViewProjection();
 	} else {
-		viewProjection_.UpdateMatrix();
-		vp = viewProjection_;
+		vp = rCamera->GetViewProjection();
 	}
 }
 
@@ -138,7 +143,7 @@ void GameScene::Draw() {
 
 	player->DebugText({50, 50});
 	if (enemy) enemy->DebugText({50, 110});
-
+	rCamera->DebugText({50, 170});
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);

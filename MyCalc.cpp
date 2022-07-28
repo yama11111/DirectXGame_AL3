@@ -26,7 +26,7 @@ Vector3 CrossVector3(const Vector3& vec1, const Vector3& vec2) {
 }
 
 float SizeVector3(const Vector3& vec) { 
-	return sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); 
+	return (float)sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); 
 }
 
 Vector3 NormalizeVector3(const Vector3& vec) { 
@@ -163,5 +163,4 @@ void Affine(WorldTransform& wt) {
 	wt.matWorld_ = Scaling(wt.matWorld_, wt.scale_);
 	wt.matWorld_ = Rotation(wt.matWorld_, wt.rotation_);
 	wt.matWorld_ = Moving(wt.matWorld_, wt.translation_);
-	wt.TransferMatrix();
 }

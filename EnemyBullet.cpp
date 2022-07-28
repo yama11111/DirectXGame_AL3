@@ -13,6 +13,7 @@ void EnemyBullet::Initialize(Model* model,
 	wt.scale_ = {0.5f, 0.5f, 0.5f};
 	AdjustAngle();
 	Affine(wt);
+	wt.TransferMatrix();
 	SetRad(0.5f);
 	SetAttribute(COLL_ATTRIBUTE_ENEMY);
 	SetMask(~COLL_ATTRIBUTE_ENEMY);
@@ -26,6 +27,7 @@ void EnemyBullet::Update() {
 	Homing();
 	wt.translation_ += velocity;
 	Affine(wt);
+	wt.TransferMatrix();
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {

@@ -10,6 +10,7 @@ class Player : public Collider{
   private:
 	WorldTransform wt;
 	std::list<std::unique_ptr<PlayerBullet>> bullets;
+	Matrix4* camera = nullptr;
 
 	Model* model = nullptr;
 	uint32_t textureHandle = 0;
@@ -23,6 +24,7 @@ class Player : public Collider{
 	Vector3 GetWorldPos() override;
 	void OnCollision() override;
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets; }
+	void SetCamera(Matrix4* camera) { this->camera = camera; }
   private:
 	void Move();
 	void Rotate();
