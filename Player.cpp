@@ -26,7 +26,7 @@ void Player::Update() {
 	Move();
 	Rotate();
 	Affine(wt);
-	wt.matWorld_ *= *camera;
+	if (camera) wt.matWorld_ *= *camera;
 	wt.TransferMatrix();
 	Attack();
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
