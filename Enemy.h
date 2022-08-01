@@ -32,6 +32,7 @@ class Enemy : public Collider {
 	Vector3 GetWorldPos() override;
 	void OnCollision() override;
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets; }
+	Vector3* GetWorldPosPointer() { return &wt.translation_; }
   private:
 	void Approach();
 	void Leave();

@@ -4,7 +4,7 @@
 class Skydome {
   private:
 	WorldTransform wt;
-	Model* model;
+	Model* model = nullptr;
   public:
 	void Initialize(Model* model);
 	void Update();

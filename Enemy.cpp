@@ -9,32 +9,33 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos)
 	this->textureHandle = textureHandle;
 	debugText = DebugText::GetInstance();
 	wt.translation_ = pos;
+	wt.scale_ = {3.0f, 3.0f, 3.0f};
 	wt.Initialize();
-	FireAndReset();
+	//FireAndReset();
 	SetRad(1.0f);
 	SetAttribute(COLL_ATTRIBUTE_ENEMY);
 	SetMask(~COLL_ATTRIBUTE_ENEMY);
 }
 
 void Enemy::Update() {
-	timedCalls.remove_if([](std::unique_ptr<TimedCall>& timedCall) {
-		return timedCall->IsFinished(); 
-	});
+	//timedCalls.remove_if([](std::unique_ptr<TimedCall>& timedCall) {
+	//	return timedCall->IsFinished(); 
+	//});
 
-	for (std::unique_ptr<TimedCall>& timedCall : timedCalls) {
-		timedCall->Update();
-	}
+	//for (std::unique_ptr<TimedCall>& timedCall : timedCalls) {
+	//	timedCall->Update();
+	//}
 
-	bullets.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { 
-		return bullet->IsDead(); 
-	});
+	//bullets.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { 
+	//	return bullet->IsDead(); 
+	//});
 
-	(this->*spUpdateTable[static_cast<size_t>(phase)])();
+	//(this->*spUpdateTable[static_cast<size_t>(phase)])();
 	Affine(wt);
 
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
-		bullet->Update();
-	}
+	//for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+	//	bullet->Update();
+	//}
 
 
 }

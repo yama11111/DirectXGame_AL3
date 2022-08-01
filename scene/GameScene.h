@@ -15,6 +15,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "CollisionManager.h"
+#include "Camera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -59,6 +60,7 @@ class GameScene {
 	DebugCamera* debugCamera_ = nullptr;
 	uint32_t textureHandle_ = 0;
 	uint32_t textureHandle2_ = 0;
+	uint32_t textureHandle3_ = 0;
 	Model* model_ = nullptr;
 	Model* modelSkydome = nullptr;
 	std::unique_ptr<Player> player;
@@ -66,7 +68,13 @@ class GameScene {
 	std::unique_ptr<Skydome> skydome;
 	std::unique_ptr<CollisionManager> collManager;
 
+	WorldTransform worldTransforms_[100];
+
 	ViewProjection vp;
-	ViewProjection viewProjection_;
+	Camera camera;
+
+	float angle = 0.0f;
 	bool isDebug = false;
+
+ private:
 };

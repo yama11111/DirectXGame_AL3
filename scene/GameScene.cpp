@@ -4,7 +4,7 @@
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 #include "MyCalc.h"
-#include <random>
+#include "Random.h"
 
 GameScene::GameScene() {}
 
@@ -29,14 +29,33 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("player.png");
 	textureHandle2_ = TextureManager::Load("enemy.png");
+	textureHandle3_ = TextureManager::Load("orange.png");
 	model_ = Model::Create();
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
 
-	std::random_device seed_gen;
-	std::mt19937_64 engine(seed_gen());
+	Random* rand = Random::GetInstance();
+	rand->Initialize();
 	
-	std::uniform_real_distribution<float> dist(0, 2 * PI);
-	std::uniform_real_distribution<float> dist2(-10, 10);
+	size_t s1 = rand->SetSeedRand(0, 2 * PI);
+	size_t s2 = rand->SetSeedRand(-100, 100);
+	for (WorldTransform& worldTransform : worldTransforms_) {
+		worldTransform.Initialize();
+		worldTransform.scale_ = {1.0f, 1.0f, 1.0f};
+		worldTransform.rotation_ = {
+			rand->GetSeedRand(s1), 
+			rand->GetSeedRand(s1), 
+			rand->GetSeedRand(s1)
+		};
+		worldTransform.translation_ = {
+			rand->GetSeedRand(s2), 
+			rand->GetSeedRand(s2), 
+			rand->GetSeedRand(s2)
+		};
+		Affine(worldTransform);
+	}
+
+	camera.Initialize();
+	angle = PI / 4;
 
 	Player* newPlayer = new Player();
 	newPlayer->Initialize(model_, textureHandle_);
@@ -44,7 +63,7 @@ void GameScene::Initialize() {
 
 	Enemy* newEnemy = new Enemy();
 	newEnemy->SetPlayer(player.get());
-	newEnemy->Initialize(model_, textureHandle2_, {0, -10, 20});
+	newEnemy->Initialize(model_, textureHandle2_, {20, 0, 20});
 	enemy.reset(newEnemy);
 
 	Skydome* newSkydome = new Skydome();
@@ -55,12 +74,30 @@ void GameScene::Initialize() {
 	newCollManager->Initialize();
 	collManager.reset(newCollManager);
 
-	viewProjection_.Initialize();
+	camera.SetSubject(player->GetWorldPosPointer());
+	camera.SetAim(enemy->GetWorldPosPointer());
 }
 
 void GameScene::Update() { 
 
-	player->Update();
+	player->Update(camera.GetDirection());
+	camera.Follow();
+
+	//camera.SetTarget(player->GetWorldPos());
+	//camera.SetEye(AddVector3(
+	//	camera.GetViewProjection().eye, player->GetMove()));
+
+	if (input_->PushKey(DIK_RIGHT))
+		camera.t(0.01f);
+	if (input_->PushKey(DIK_LEFT))
+		camera.t(-0.01f);
+	//camera.Zoom(angle);
+
+	if (input_->TriggerKey(DIK_SPACE))camera.Zooming();
+
+	camera.Update();
+	if (input_->TriggerKey(DIK_B)) camera.Shake();
+
 	if (enemy) enemy->Update();
 	skydome->Update();
 
@@ -89,8 +126,7 @@ void GameScene::Update() {
 		debugCamera_->Update();
 		vp = debugCamera_->GetViewProjection();
 	} else {
-		viewProjection_.UpdateMatrix();
-		vp = viewProjection_;
+		vp = camera.GetViewProjectionT();
 	}
 }
 
@@ -117,10 +153,15 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
+	for (WorldTransform& worldTransform : worldTransforms_) {
+
+		model_->Draw(worldTransform, vp, textureHandle3_);
+	}
+
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	skydome->Draw(vp);
+	//skydome->Draw(vp);
 	player->Draw(vp);
 	if(enemy) enemy->Draw(vp);
 
@@ -138,7 +179,7 @@ void GameScene::Draw() {
 
 	player->DebugText({50, 50});
 	if (enemy) enemy->DebugText({50, 110});
-
+	camera.DebugText({50, 170});
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);

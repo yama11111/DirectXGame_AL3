@@ -14,7 +14,7 @@ class EnemyBullet : public Collider {
 	static const int32_t LIFE_T = 60 * 5;
 	int32_t deathT = LIFE_T;
 	bool isDead = false;
-	Player* player;
+	Player* player = nullptr;
   public:
 	void Initialize(Model* model, const Vector3& pos, const Vector3& velocity);
 	void Update();

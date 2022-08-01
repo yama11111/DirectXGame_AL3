@@ -55,6 +55,24 @@
     <Filter Include="ヘッダー ファイル\gameObj">
       <UniqueIdentifier>{2b3d5adc-46a2-4594-a0fb-ec1a858bd941}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\MyMath">
+      <UniqueIdentifier>{efa7e497-28c2-4f2b-beb1-71ae7d17786e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyMath">
+      <UniqueIdentifier>{89ec937f-33d7-4ace-8f18-7d0b017be9b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Camera">
+      <UniqueIdentifier>{e7800d21-7f2b-423a-b937-bf337d039e41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Camera">
+      <UniqueIdentifier>{c89af201-5b3e-46c6-8c94-4cf4417fc72e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Coll">
+      <UniqueIdentifier>{8a8164b3-a45b-459f-8afb-1b8503b7944d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Coll">
+      <UniqueIdentifier>{ba13420a-b397-4e90-943b-b71bd7466bd3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,9 +90,6 @@
     <ClCompile Include="scene\GameScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="MyCalc.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>ソース ファイル\gameObj</Filter>
     </ClCompile>
@@ -90,13 +105,31 @@
     <ClCompile Include="TimedCall.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
+    <ClCompile Include="Skydome.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>ソース ファイル\MyMath</Filter>
+    </ClCompile>
+    <ClCompile Include="MyCalc.cpp">
+      <Filter>ソース ファイル\MyMath</Filter>
+    </ClCompile>
+    <ClCompile Include="Shake.cpp">
+      <Filter>ソース ファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>ソース ファイル\Coll</Filter>
     </ClCompile>
     <ClCompile Include="CollisionManager.cpp">
+      <Filter>ソース ファイル\Coll</Filter>
+    </ClCompile>
+    <ClCompile Include="Ease.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Skydome.cpp">
+    <ClCompile Include="Timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,9 +215,6 @@
     <ClInclude Include="3d\PrimitiveDrawer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MyCalc.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>ヘッダー ファイル\gameObj</Filter>
     </ClInclude>
@@ -200,16 +230,34 @@
     <ClInclude Include="TimedCall.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
+    <ClInclude Include="Skydome.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>ヘッダー ファイル\MyMath</Filter>
+    </ClInclude>
+    <ClInclude Include="MyCalc.h">
+      <Filter>ヘッダー ファイル\MyMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Shake.h">
+      <Filter>ヘッダー ファイル\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>ヘッダー ファイル\Coll</Filter>
     </ClInclude>
     <ClInclude Include="CollisionConfig.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Coll</Filter>
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
+      <Filter>ヘッダー ファイル\Coll</Filter>
+    </ClInclude>
+    <ClInclude Include="Ease.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Skydome.h">
+    <ClInclude Include="Timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
