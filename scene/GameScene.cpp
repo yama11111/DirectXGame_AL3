@@ -227,7 +227,14 @@ void GameScene::Shot() {
 }
 
 bool GameScene::LayCollision(Vector3& position, const float radius) { 
+	
+	Vector3 v = NormalizeVector3(layWT.translation_);
+	float l = DotVector3(v, position);
+	v = MultVector3(v, l);
+	Vector3 v2 = SubVector3(position, v);
 
+	if (SizeVector3(v2) >= radius) return true;
+	return false; 
 }
 
 void GameScene::DebugState() {
